@@ -5,9 +5,13 @@
     <fx:Script><![CDATA[
         import mx.controls.Alert;
 
+        import parse.ParseJson;
+
+        private var _file:File;
+
         private function onDragEnter(event:NativeDragEvent):void {
             NativeDragManager.acceptDragDrop(fileContainer);
-            fileContainer.setStyle('backgroundColor','#4F4F4F');
+            fileContainer.setStyle('backgroundColor', '#4F4F4F');
         }
 
         private function onDropFile(event:NativeDragEvent):void {
@@ -17,17 +21,47 @@
                 var file:File = arr[0] as File;
                 if (file.isDirectory) {
                     folderPath.text = file.nativePath;
-                    var fileLst:Array = file.getDirectoryListing();
-                    if (fileLst.length > 0) {
-                        for (var i:int = 0; i < fileLst.length; ++i) {
-                            file = fileLst[i] as File;
-                            trace(file.nativePath);
+                    _file = file;
+                } else {
+                    folderPath.text = "";
+                    _file = null;
+                }
+            }else{
+                _file = null;
+            }
+        }
+
+        private function onClickConvert(){
+            if(_file!=null){
+                var fileLst:Array = _file.getDirectoryListing();
+                if (fileLst.length > 0) {
+
+                    var parseJson:ParseJson = new ParseJson();
+
+                    for (var i:int = 0; i < fileLst.length; ++i) {
+                        _file = fileLst[i] as File;
+                        if (_file.extension.toLowerCase() == "json") {
+                            if (_file.name.indexOf("texture")==0) {
+                                //材质的json
+                            } else {
+                                //动画json
+                                try{
+                                    var fs:FileStream = new FileStream();
+                                    fs.open(_file, FileMode.READ);
+                                    var content:String = fs.readMultiByte(fs.bytesAvailable,"utf-8");
+                                    fs.close();
+                                }catch(e:*){
+                                    Alert.show(e.toString(),"Error");
+                                }finally{
+                                    parseJson.parseAnimJson(content);
+                                }
+                            }
                         }
                     }
-                }else{
-                    folderPath.text="";
                 }
             }
+            folderPath.text="";
+            _file = null;
         }
         ]]></fx:Script>
 
@@ -39,5 +73,5 @@
     </s:BorderContainer>
     <s:Label text="" id="folderPath" left="10" right="10" top="230" height="50" />
     <s:Button label="Convert"  horizontalCenter="0" left="20" right="20" bottom="10" height="40"
-            skinClass="skin.green.GreenButtonSkin" fontWeight="bold" fontSize="15"/>
+            skinClass="skin.green.GreenButtonSkin" fontWeight="bold" fontSize="15" click="onClickConvert()"/>
 </s:WindowedApplication>

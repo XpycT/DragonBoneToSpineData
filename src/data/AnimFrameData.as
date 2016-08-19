@@ -6,7 +6,7 @@ import flash.geom.Point;
 
 public class AnimFrameData {
     public var duration:int = 1;
-    public var curve:Vector<Number>;
+    public var curve:Vector.<Number>;
     public var tweenEasing:Number = NaN;
     public var displayIndex:int=0;
     public var z:Number;

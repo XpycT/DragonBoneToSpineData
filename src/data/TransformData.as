@@ -8,12 +8,12 @@ public class TransformData {
     public var rotate:Number = 0;
     public var scx:Number = 1;
     public var scy:Number = 1;
-    public function Add(data:TransformData):TransformData{
-        x+=data.x;
-        y+=data.y;
-        rotate+=data.rotate;
-        scx+=data.scx;
-        scy+=data.scy;
+    public function Add(transform:TransformData):TransformData{
+        x+=transform.x;
+        y+=transform.y;
+        rotate+=transform.rotate;
+        scx+=transform.scx;
+        scy+=transform.scy;
         return this;
     }
 }
