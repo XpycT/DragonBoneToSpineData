@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+    ADOBE SYSTEMS INCORPORATED
+    Copyright 2008 Adobe Systems Incorporated
+    All Rights Reserved.
+
+    NOTICE: Adobe permits you to use, modify, and distribute this file
+    in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<!--- The default skin class for the thumb of a Spark HSlider component.
+
+ @see spark.components.HSlider
+
+ @langversion 3.0
+ @playerversion Flash 10
+ @playerversion AIR 1.5
+ @productversion Flex 4
+-->
+<s:SparkSkin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark"
+             xmlns:fb="http://ns.adobe.com/flashbuilder/2009">
+
+  <fx:Metadata>
+    <![CDATA[
+    /**
+     * @copy spark.skins.spark.ApplicationSkin#hostComponent
+     */
+    [HostComponent("spark.components.Button")]
+    ]]>
+    </fx:Metadata>
+
+  <fx:Script fb:purpose="styling">
+    /**
+     * @private
+     */
+    override protected function initializationComplete():void
+    {
+      useChromeColor = true;
+      super.initializationComplete();
+    }
+  </fx:Script>
+
+  <s:states>
+    <s:State name="up" />
+    <s:State name="over" />
+    <s:State name="down" />
+    <s:State name="disabled" />
+  </s:states>
+
+  <!-- layer 2: fill -->
+  <!--- @private -->
+  <s:Rect id="fill" left="1" right="1" top="1" bottom="1" radiusX="2">
+    <s:fill>
+      <s:LinearGradient rotation="90">
+        <s:GradientEntry color="0x999999"
+                         color.down="0xcccccc"
+                />
+        <s:GradientEntry color="#505557"
+                         color.over="0x999999"
+                         color.down="0x999999"
+                />
+      </s:LinearGradient>
+    </s:fill>
+  </s:Rect>
+
+  <!-- layer 7: border - put on top of the fill so it doesn't disappear when scale is less than 1 -->
+  <!--- @private -->
+  <s:Rect id="border" left="0" right="0" top="0" bottom="0" width="69" height="20" radiusX="2">
+    <s:stroke>
+      <s:SolidColorStroke color="0x59595a" />
+    </s:stroke>
+  </s:Rect>
+
+  <!-- layer 7: border - put on top of the fill so it doesn't disappear when scale is less than 1 -->
+  <!--- @private -->
+  <s:Rect id="border2" left="1" right="1" top="1" bottom="1" width="69" height="20" radiusX="2">
+    <s:stroke>
+      <s:SolidColorStroke color="#0" alpha="0.6" />
+    </s:stroke>
+  </s:Rect>
+
+</s:SparkSkin>

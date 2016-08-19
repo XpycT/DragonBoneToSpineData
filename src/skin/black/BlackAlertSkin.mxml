@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SparkSkin name="CustomPanelBorderSkin"
+             xmlns:fx="http://ns.adobe.com/mxml/2009"
+             xmlns:s="library://ns.adobe.com/flex/spark"
+             implements="mx.core.IRectangularBorder">
+
+  <fx:Script>
+                <![CDATA[
+    import mx.core.EdgeMetrics;
+    import mx.core.IUIComponent;
+
+
+    static private const exclusions:Array = ["background"];
+    override public function get colorizeExclusions():Array {
+      return exclusions;
+    }
+
+
+    static private const contentFill:Array = [];
+    override public function get contentItems():Array {
+      return contentFill
+    };
+
+    private var _metrics:EdgeMetrics = new EdgeMetrics(1, 32, 1, 1);
+    public function get borderMetrics():EdgeMetrics {
+      var hasPanelParent:Boolean = isPanel(parent);
+      var controlBar:IUIComponent = hasPanelParent ? Object(parent).mx_internal::_controlBar : null;
+      if (controlBar && controlBar.includeInLayout) {
+        _metrics.bottom = controlBar.getExplicitOrMeasuredHeight() + 1;
+      } else {
+        _metrics.bottom = 1;
+      }
+      return _metrics;
+    }
+
+    public function get backgroundImageBounds():Rectangle {
+      return null;
+    }
+
+    public function set backgroundImageBounds(value:Rectangle):void {
+    }
+
+    public function get hasBackgroundImage():Boolean {
+      return false;
+    }
+
+    public function layoutBackgroundImage():void {
+    }
+
+    override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void {
+      var em:EdgeMetrics = borderMetrics;
+      if (em.bottom > 1) {
+        cbbg.height = em.bottom - 1;
+        cbdiv.bottom = cbbg.height;
+        cbbg.visible = cbdiv.visible = true;
+      } else {
+        cbbg.visible = cbdiv.visible = false;
+      }
+      super.updateDisplayList(unscaledWidth, unscaledHeight);
+    }
+
+    private static var panels:Object = {};
+
+    private static function isPanel(parent:Object):Boolean {
+      var s:String = getQualifiedClassName(parent);
+      if (panels[s] == 1) {
+        return true;
+      }
+      if (panels[s] == 0) {
+        return false;
+      }
+      if (s == "mx.containers::Panel") {
+        panels[s] == 1;
+        return true;
+      }
+      var x:XML = describeType(parent);
+      var xmllist:XMLList = x.extendsClass.(@type == "mx.containers::Panel");
+      if (xmllist.length() == 0) {
+        panels[s] = 0;
+        return false;
+      }
+      panels[s] = 1;
+      return true;
+    }
+    ]]>
+        </fx:Script>
+
+  <!-- 阴影 -->
+  <s:Rect left="0" top="0" right="0" bottom="0">
+    <s:filters>
+      <s:DropShadowFilter blurX="10" blurY="10" alpha="0.32" distance="8" angle="90" knockout="true" />
+    </s:filters>
+    <s:fill>
+      <s:SolidColor color="0" />
+    </s:fill>
+  </s:Rect>
+
+  <!-- layer 1:边框-->
+  <s:Rect left="0" right="0" top="0" bottom="0"  radiusY="2" radiusX="2">
+    <s:stroke>
+      <s:SolidColorStroke color="0x59595a" alpha="1" weight="2" />
+    </s:stroke>
+  </s:Rect>
+  <!-- layer 1:边框-->
+  <s:Rect left="2" right="2" top="2" bottom="2"  radiusY="2" radiusX="2">
+    <s:stroke>
+      <s:SolidColorStroke color="0" alpha="0.6" weight="1" />
+    </s:stroke>
+  </s:Rect>
+
+  <!-- layer 2: 背景色-->
+  <s:Rect id="background" left="3" top="3" right="3" bottom="3" alpha="1"  radiusY="2" radiusX="2">
+    <s:fill>
+      <s:SolidColor color="#3a3a3a"/>
+    </s:fill>
+  </s:Rect>
+
+  <!-- layer 3: 标题栏-->
+  <s:Rect left="3" right="3" top="3" height="26"  topLeftRadiusX="2" topLeftRadiusY="2" topRightRadiusX="2" topRightRadiusY="2">
+    <s:filters>
+      <s:DropShadowFilter blurY="3" alpha="0.6" distance="2" angle="90" knockout="true" />
+    </s:filters>
+    <s:fill>
+      <s:SolidColor color="0" />
+    </s:fill>
+  </s:Rect>
+
+  <s:Rect left="3" right="3" top="3" height="26"  topLeftRadiusX="2" topLeftRadiusY="2" topRightRadiusX="2" topRightRadiusY="2">
+    <s:fill>
+      <s:LinearGradient rotation="90">
+        <s:GradientEntry color="0x59595a" />
+        <s:GradientEntry color="0x414141" />
+      </s:LinearGradient>
+    </s:fill>
+  </s:Rect>
+
+
+  <!-- layer 5: 控制栏背景色-->
+  <s:Rect id="cbbg" left="3" right="3" bottom="3" height="20" bottomLeftRadiusX="2" bottomLeftRadiusY="2" bottomRightRadiusX="2" bottomRightRadiusY="2">
+    <s:fill>
+      <s:SolidColor color="0x505557" />
+    </s:fill>
+  </s:Rect>
+
+  <!-- layer 6: 控制栏分割线-->
+  <s:Rect id="cbdiv" left="3" right="3" bottom="20" height="1" bottomLeftRadiusX="2" bottomLeftRadiusY="2" bottomRightRadiusX="2" bottomRightRadiusY="2">
+    <s:fill>
+      <s:SolidColor color="0x505557" />
+    </s:fill>
+  </s:Rect>
+
+</s:SparkSkin>

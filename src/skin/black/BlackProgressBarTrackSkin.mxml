@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SparkSkin xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:s="library://ns.adobe.com/flex/spark">
+  <fx:Script>
+    override protected function initializationComplete():void {
+      useChromeColor = true; super.initializationComplete();
+    }
+
+  </fx:Script>
+  <!-- layer 1: fill -->
+  <s:Rect id="layer" left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5" minHeight="15">
+    <s:fill>
+      <s:SolidColor color="0x353535" />
+    </s:fill>
+  </s:Rect>
+  <!-- layer 2: border -->
+  <s:Rect left="0" right="0" top="0" bottom="0" radiusX="5" radiusY="5">
+    <s:stroke>
+      <s:SolidColorStroke weight="1"
+        color="#666666"
+        />
+    </s:stroke>
+  </s:Rect>
+
+  <!-- layer 2: border -->
+  <s:Rect left="1" right="1" top="1" bottom="1" radiusX="5" radiusY="5">
+    <s:stroke>
+      <s:SolidColorStroke weight="1"
+                          color="#0" alpha="0.8"
+              />
+    </s:stroke>
+  </s:Rect>
+</s:SparkSkin> 

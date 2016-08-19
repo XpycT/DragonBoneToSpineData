@@ -1,0 +1,186 @@
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+
+global
+{
+    fontFamily: Arial;
+    fontSize: 13;
+    color: #C4C4C4;
+    modalTransparencyColor:black ;
+    modalTransparency: 0.3;
+    textRollOverColor: #CCCCCC; /*text rolling over color*/
+    textSelectedColor:#CCCCCC; /*SelectedColor*/
+    focusColor: #0f2a3e;
+}
+
+mx|ToolTip{
+    backgroundColor: #59595a;
+    fontSize: 12;
+}
+
+s|Button {
+    skinClass: ClassReference("skin.black.BlackButtonSkin");
+}
+
+mx|Alert
+{
+    color: #C4C4C4;
+    buttonStyleName: alertButton;
+    borderSkin:ClassReference("skin.black.BlackAlertSkin");
+}
+
+.alertButton {
+    upSkin: ClassReference("skin.black.BlackButtonSkin");
+    downSkin: ClassReference("skin.black.BlackButtonDownSkin");
+    overSkin: ClassReference("skin.black.BlackButtonDownSkin");
+    disabledSkin: ClassReference("skin.black.BlackButtonSkin");
+}
+
+s|ToggleButton{
+    skinClass: ClassReference("skin.black.BlackToggleButtonSkin");
+}
+
+s|List
+{
+    contentBackgroundColor:#49494a ;
+    selectionColor: #333333;
+    rollOverColor: #3c3f41;
+    skinClass: ClassReference("skin.black.BlackListSkin");
+    borderColor: 0;
+    borderAlpha: 0.6;
+}
+
+s|VScrollBar
+{
+    skinClass: ClassReference("skin.black.BlackVScrollBarSkin");
+}
+
+s|HScrollBar
+{
+    skinClass: ClassReference("skin.black.BlackHScrollBarSkin");
+}
+
+s|Panel
+{
+    backgroundColor: #3a3a3a;
+    skinClass: ClassReference("skin.black.BlackPanelSkin");
+    borderColor: #505557;
+}
+
+s|BorderContainer{
+    backgroundColor: #3a3a3a;
+    borderAlpha: 0.2;
+}
+
+s|TabBar
+{
+    skinClass: ClassReference("skin.black.BlackTabBarSkin");
+}
+s|NavigatorContent{
+    backgroundColor: #353535;
+}
+
+mx|ProgressBar
+{
+    trackSkin: ClassReference("skin.black.BlackProgressBarTrackSkin");
+    barSkin:ClassReference("skin.black.BlackProgressBarSkin");
+    /*trackHeight: 20;*/
+}
+
+s|CheckBox
+{
+    skinClass: ClassReference("skin.black.BlackCheckBoxSkin");
+    symbolColor:#FFFFFF;
+}
+
+s|RadioButton
+{
+    skinClass: ClassReference("skin.black.BlackRadioButtonSkin");
+    symbolColor: #FFFFFF;
+}
+
+s|TextInput
+{
+    contentBackgroundColor: #3a3a3a;
+    color: #cccccc;
+    focusedTextSelectionColor: #2c2c2c;
+    skinClass:ClassReference("skin.black.BlackTextInputSkin");
+    borderColor: 0;
+    borderAlpha: 0.6;
+}
+
+s|TextArea
+{
+    contentBackgroundColor: #3a3a3a;
+    color: #cccccc;
+    focusedTextSelectionColor: #2c2c2c;
+    skinClass:ClassReference("skin.black.BlackTextAreaSkin");
+    borderColor: 0;
+    borderAlpha: 0.6;
+}
+
+s|TitleWindow
+{
+    skinClass: ClassReference("skin.black.BlackTitleWindowSkin");
+    borderColor: #505557;
+    symbolColor: #CCCCCC;
+    backgroundColor: #3a3a3a;
+}
+
+s|ComboBox
+{
+    skinClass: ClassReference("skin.black.BlackComboBoxSkin");
+    symbolColor:#CCCCCC;
+}
+
+s|DropDownList
+{
+    skinClass: ClassReference("skin.black.BlackDropDownListSkin");
+    symbolColor:#CCCCCC;
+}
+
+s|Spinner{
+    skinClass: ClassReference("skin.black.BlackSpinnerSkin");
+    symbolColor: #CCCCCC;
+}
+
+s|NumericStepper{
+    skinClass: ClassReference("skin.black.BlackNumericStepperSkin");
+}
+
+s|HSlider{
+    skinClass: ClassReference("skin.black.BlackHSliderSkin");
+}
+
+mx|ColorPicker{
+    swatchPanelStyleName: swatchPanelStyle;
+    chromeColor: #999999;
+}
+
+.swatchPanelStyle {
+    backgroundColor: #2c2c2c;
+    highlightColor: #2c2c2c;
+    borderColor: #59595a;
+    contentBackgroundColor: #3a3a3a;
+    color: #CCCCCC;
+}
+
+mx|HRule,mx|VRule{
+    strokeColor: #2c2c2c;
+    shadowColor: #49494a;
+}
+
+mx|MenuBar,mx|Accordion,mx|Tree,mx|DateField,mx|DateChooser{
+    chromeColor: #2c2c2c;
+    rollOverColor: #505557;
+    selectionColor: #2c2c2c;
+    symbolColor: white;
+    contentBackgroundColor: #3a3a3a;
+    borderColor:#59595a;
+    borderAlpha: 0.3;
+    cornerRadius: 2;
+}
+
+mx|DateChooser{
+    borderVisible: false;
+}
