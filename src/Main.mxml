@@ -3,9 +3,11 @@
                        xmlns:mx="library://ns.adobe.com/flex/mx"  showStatusBar="false" width="300" height="350" backgroundColor="0x3c3f41">
     <fx:Style source="skin/black/Black.css" />
     <fx:Script><![CDATA[
+        import flashx.textLayout.formats.Direction;
+
         import mx.controls.Alert;
 
-        import parse.ParseJson;
+        import ParseJson;
 
         private var _file:File;
 
@@ -26,13 +28,13 @@
                     folderPath.text = "";
                     _file = null;
                 }
-            }else{
+            } else {
                 _file = null;
             }
         }
 
-        private function onClickConvert(){
-            if(_file!=null){
+        private function onClickConvert() {
+            if (_file != null) {
                 var fileLst:Array = _file.getDirectoryListing();
                 if (fileLst.length > 0) {
 
@@ -41,27 +43,73 @@
                     for (var i:int = 0; i < fileLst.length; ++i) {
                         _file = fileLst[i] as File;
                         if (_file.extension.toLowerCase() == "json") {
-                            if (_file.name.indexOf("texture")==0) {
-                                //材质的json
-                            } else {
-                                //动画json
-                                try{
-                                    var fs:FileStream = new FileStream();
-                                    fs.open(_file, FileMode.READ);
-                                    var content:String = fs.readMultiByte(fs.bytesAvailable,"utf-8");
-                                    fs.close();
-                                }catch(e:*){
-                                    Alert.show(e.toString(),"Error");
-                                }finally{
+                            try {
+                                var fs:FileStream = new FileStream();
+                                fs.open(_file, FileMode.READ);
+                                var content:String = fs.readMultiByte(fs.bytesAvailable, "utf-8");
+                                fs.close();
+                            } catch (e:*) {
+                                Alert.show(e.toString(), "Error");
+                            } finally {
+                                if (_file.name.indexOf("texture") == 0) {
+                                    //材质的json
+                                    parseJson.parseTextureJosn(content);
+                                    saveTextureJsonFile(parseJson.textureData,_file.name);
+                                }else{
+                                    //动画json
                                     parseJson.parseAnimJson(content);
+                                    saveAnimJsonFile(parseJson.spineData,_file.name);
                                 }
                             }
+                        }else if(_file.extension.toLowerCase()=="png"){
+                            //复制
+                            copyTexuture();
                         }
                     }
                 }
             }
-            folderPath.text="";
+            folderPath.text = "";
             _file = null;
+        }
+
+        private function copyTexuture():void
+        {
+            var path:String = _file.nativePath.substring(0,_file.nativePath.lastIndexOf("/"))+"_spine";
+            var dir:File = new File(path);
+            if(dir.isDirectory){
+                if(!dir.exists) dir.createDirectory();
+            }
+            _file.copyTo(new File(dir.nativePath+"/"+_file.name),true);
+        }
+
+        private function saveAnimJsonFile(jsonObj:Object,name:String):void{
+            var path:String = _file.nativePath.substring(0,_file.nativePath.lastIndexOf("/"))+"_spine";
+            var dir:File = new File(path);
+            if(dir.isDirectory){
+                if(!dir.exists) dir.createDirectory();
+            }
+            var file:File = new File(dir.nativePath+"/"+name);
+
+            var json:String = JSON.stringify(jsonObj);
+            var fs:FileStream = new FileStream();
+            fs.open(file,FileMode.WRITE);
+            fs.writeMultiByte(json,"utf-8");
+            fs.close();
+        }
+
+        private function saveTextureJsonFile(data:String,name:String):void{
+
+            var path:String = _file.nativePath.substring(0,_file.nativePath.lastIndexOf("/"))+"_spine";
+            var dir:File = new File(path);
+            if(dir.isDirectory){
+                if(!dir.exists) dir.createDirectory();
+            }
+            var file:File = new File(dir.nativePath+"/"+name.substring(0,name.lastIndexOf(".json"))+".atlas.txt");
+
+            var fs:FileStream = new FileStream();
+            fs.open(file,FileMode.WRITE);
+            fs.writeMultiByte(data,"utf-8");
+            fs.close();
         }
         ]]></fx:Script>
 

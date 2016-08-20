@@ -21,5 +21,6 @@
     </content>
     <orderEntry type="jdk" jdkName="Flex4.6.0-AIR19" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="Libs" level="project" />
   </component>
 </module>
