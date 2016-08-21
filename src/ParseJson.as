@@ -19,6 +19,9 @@ public class ParseJson {
     private var _perKeyTime:Number = 0.02;
     private var _textureKV:Dictionary = null;
 
+    private var _bonesKV:Dictionary = null; //key为bone name ,value为dragonBone数据
+    private var _slotsKV:Dictionary = null; //key为slot name ,value为dragonBone数据
+
     public function get spineData():Object{
         return _spineData;
     }
@@ -92,6 +95,8 @@ public class ParseJson {
                     _perKeyTime = 1/_armatureObj["frameRate"];
                 }
                 _defaultSkinsSlotKV = new Dictionary();
+                _bonesKV = new Dictionary();
+                _slotsKV = new Dictionary();
                 parseSkins();
                 parseBones();
                 parseSlots();
@@ -119,6 +124,7 @@ public class ParseJson {
                     if(_defaultSkinsSlotKV.hasOwnProperty(boneName)){
                         spine_bone["attachment"] = _defaultSkinsSlotKV[boneName][0].name;
                     }
+                    _bonesKV[boneName] = db_bone;
                 }
                 if(db_bone.hasOwnProperty("parent")){//骨骼的父骨骼
                     var parentBoneName:String = db_bone["parent"].toString();
@@ -169,6 +175,7 @@ public class ParseJson {
                     var slotName:String = db_slot["name"].toString();
                     spine_slot["name"] = slotName;
                     spine_slot["attachment"] = _defaultSkinsSlotKV[slotName][0].name;
+                    _slotsKV[slotName] = db_slot;
                 }
                 if(db_slot.hasOwnProperty("parent")){ //parent bone name
                     spine_slot["bone"] = db_slot["parent"].toString();
@@ -342,18 +349,25 @@ public class ParseJson {
             //db frame
             var frames:Array = db_animSlotObj["frame"] as Array;
             var frames_len:uint = frames.length;
+            //time
+            var during:Number = 0;
             for(var j:uint = 0 ;j<frames_len;++j){
                 var frame:Object = frames[j];
-                var time:Number = _perKeyTime*frame["duration"];
-                if(frame.hasOwnProperty("curve")){
-                    var curve:Array=frame["curve"] as Array;
+                if(j<frames_len-1){
+                    if(frame.hasOwnProperty("curve")){
+                        var curve:Object=frame["curve"];
+                    }else if(frame.hasOwnProperty("tweenEasing")){
+                        if(frame["tweenEasing"]==null){
+                            curve = "stepped";
+                        }
+                    }
                 }
                 if(frame.hasOwnProperty("displayIndex")){
                     var slotName:String = db_animSlotObj["name"];
                     var index:uint = uint(frame["displayIndex"]);
                     var attachment:String = _defaultSkinsSlotKV[slotName][index].name;
                     spine_attachment.push({
-                        "time":time,
+                        "time":during,
                         "name":attachment
                     });
                 }
@@ -367,17 +381,19 @@ public class ParseJson {
                     var colorDec:uint = toDec(color.r,color.g,color.b,color.a);
                     if(curve){
                         spine_color.push({
-                            "time":time,
+                            "time":during,
                             "color":colorDec,
                             "curve":curve
                         });
                     }else{
                         spine_color.push({
-                            "time":time,
+                            "time":during,
                             "color":colorDec
                         });
                     }
                 }
+                during += _perKeyTime*frame["duration"];
+                curve = null;
             }
             if(spine_attachment.length>0||spine_color.length>0){
                 var spine_slot:Object = new Object();
@@ -393,13 +409,12 @@ public class ParseJson {
         }
     }
 
-
     private function parseBoneAnims(db_animObj:Object,spine_bonesArr:Object):void{
         var db_animBoneArr:Array = db_animObj["bone"] as Array;
         var db_animBoneArr_len:uint = db_animBoneArr.length;
         for(var i:uint = 0;i<db_animBoneArr_len;++i){
             var db_animBoneObj:Object = db_animBoneArr[i];
-
+            var boneName:String = db_animBoneObj["name"];
             //spine translate , scale , rotate
             var spine_translate:Array=[];
             var spine_scale:Array=[];
@@ -407,11 +422,18 @@ public class ParseJson {
             //db frame
             var frames:Array = db_animBoneObj["frame"] as Array;
             var frames_len:uint = frames.length;
+            //time
+            var during:Number = 0;
             for(var j:uint = 0 ;j<frames_len;++j){
                 var frame:Object = frames[j];
-                var time:Number = _perKeyTime*frame["duration"];
-                if(frame.hasOwnProperty("curve")){
-                    var curve:Array=frame["curve"] as Array;
+                if(j<frames_len-1){
+                    if(frame.hasOwnProperty("curve")){
+                        var curve:Object=frame["curve"];
+                    }else if(frame.hasOwnProperty("tweenEasing")){
+                        if(frame["tweenEasing"]==null){
+                            curve = "stepped";
+                        }
+                    }
                 }
                 if(frame.hasOwnProperty("transform")){
                     var transform:Object = frame["transform"];
@@ -424,14 +446,14 @@ public class ParseJson {
                             spine_translate.push({
                                 "x":px,
                                 "y":py,
-                                "time":time,
+                                "time":during,
                                 "curve":curve
                             });
                         }else{
                             spine_translate.push({
                                 "x":px,
                                 "y":py,
-                                "time":time
+                                "time":during
                             });
                         }
                     }
@@ -441,13 +463,13 @@ public class ParseJson {
                         if(curve){
                             spine_rotate.push({
                                 "angle":angle ,
-                                "time":time,
+                                "time":during,
                                 "curve":curve
                             });
                         }else{
                             spine_rotate.push({
                                 "angle":angle ,
-                                "time":time
+                                "time":during
                             });
                         }
 
@@ -461,23 +483,25 @@ public class ParseJson {
                             spine_scale.push({
                                 "x":scx,
                                 "y":scy,
-                                "time":time,
+                                "time":during,
                                 "curve":curve
                             });
                         }else{
                             spine_scale.push({
                                 "x":scx,
                                 "y":scy,
-                                "time":time
+                                "time":during
                             });
                         }
                     }
                 }
+                during += _perKeyTime*frame["duration"];
+                curve = null;
             }
 
             if(spine_translate.length>0 || spine_scale.length>0 || spine_rotate.length>0){
                 var spine_bone:Object = new Object();
-                spine_bonesArr[db_animBoneObj["name"]] = spine_bone;
+                spine_bonesArr[boneName] = spine_bone;
 
                 if(spine_translate.length>0){
                     spine_bone["translate"] = spine_translate;
@@ -506,6 +530,13 @@ public class ParseJson {
         var sr:uint = r << 16;
         var sg:uint = g << 8;
         return sa | sr | sg | b;
+    }
+
+    public static function getNumber(dic:Object,key:String,defaultValue:Number):Number{
+        if(dic.hasOwnProperty(key)){
+            return Number(dic[key]);
+        }
+        return defaultValue;
     }
 }
 }
