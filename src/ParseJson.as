@@ -133,7 +133,7 @@ public class ParseJson {
                 if(db_bone.hasOwnProperty("transform")){ //transform
                     var transform:Object = db_bone["transform"];
                     if(transform.hasOwnProperty("x")) spine_bone["x"] = Number(transform["x"]);
-                    if(transform.hasOwnProperty("y")) spine_bone["y"] = -Number(transform["x"]);
+                    if(transform.hasOwnProperty("y")) spine_bone["y"] = -Number(transform["y"]);
                     if(transform.hasOwnProperty("skX")) spine_bone["rotation"] = -Number(transform["skX"]);
                     if(transform.hasOwnProperty("scX")) spine_bone["scaleX"] = Number(transform["scX"]);
                     if(transform.hasOwnProperty("scY")) spine_bone["scaleY"] = Number(transform["scY"]);
