@@ -121,9 +121,6 @@ public class ParseJson {
                 if(db_bone.hasOwnProperty("name")){ //骨骼名字
                     var boneName:String = db_bone["name"].toString();
                     spine_bone["name"] = boneName;
-                    if(_defaultSkinsSlotKV.hasOwnProperty(boneName)){
-                        spine_bone["attachment"] = _defaultSkinsSlotKV[boneName][0].name;
-                    }
                     _bonesKV[boneName] = db_bone;
                 }
                 if(db_bone.hasOwnProperty("parent")){//骨骼的父骨骼
@@ -174,7 +171,11 @@ public class ParseJson {
                 if(db_slot.hasOwnProperty("name")){ //slot name
                     var slotName:String = db_slot["name"].toString();
                     spine_slot["name"] = slotName;
-                    spine_slot["attachment"] = _defaultSkinsSlotKV[slotName][0].name;
+                    if(_defaultSkinsSlotKV.hasOwnProperty(slotName)){
+                        spine_slot["attachment"] = _defaultSkinsSlotKV[slotName][0].name;
+                    }else{
+                        spine_slot["attachment"]=null;
+                    }
                     _slotsKV[slotName] = db_slot;
                 }
                 if(db_slot.hasOwnProperty("parent")){ //parent bone name
@@ -185,12 +186,14 @@ public class ParseJson {
                 }
                 if(db_slot.hasOwnProperty("color")){ //color
                     var db_color:Object = db_slot["color"];
-                    var color:Object = new Object();
+                    var color:Object = {
+                        r:255,g:255,b:255,a:255
+                    };
                     if(db_color.hasOwnProperty("aM")) color.a = uint(Number(db_color["aM"])*2.55);
                     if(db_color.hasOwnProperty("rM")) color.r = uint(Number(db_color["rM"])*2.55);
                     if(db_color.hasOwnProperty("gM")) color.g = uint(Number(db_color["gM"])*2.55);
                     if(db_color.hasOwnProperty("bM")) color.b = uint(Number(db_color["bM"])*2.55);
-                    spine_slot["color"]=toDec(color.r,color.g,color.b,color.a);
+                    spine_slot["color"]=rgbaToHex(color.r,color.g,color.b,color.a);
                 }
             }
         }
@@ -364,21 +367,30 @@ public class ParseJson {
                 }
                 if(frame.hasOwnProperty("displayIndex")){
                     var slotName:String = db_animSlotObj["name"];
-                    var index:uint = uint(frame["displayIndex"]);
-                    var attachment:String = _defaultSkinsSlotKV[slotName][index].name;
-                    spine_attachment.push({
-                        "time":during,
-                        "name":attachment
-                    });
+                    var index:int = int(frame["displayIndex"]);
+                    if(index==-1){
+                        spine_attachment.push({
+                            "time":during,
+                            "name":null
+                        });
+                    }else{
+                        var attachment:String = _defaultSkinsSlotKV[slotName][index].name;
+                        spine_attachment.push({
+                            "time":during,
+                            "name":attachment
+                        });
+                    }
                 }
                 if(frame.hasOwnProperty("color")){
                     var db_color:Object = frame["color"];
-                    var color:Object = new Object();
+                    var color:Object = {
+                        r:255,g:255,b:255,a:255
+                    };
                     if(db_color.hasOwnProperty("aM")) color.a = uint(Number(db_color["aM"])*2.55);
                     if(db_color.hasOwnProperty("rM")) color.r = uint(Number(db_color["rM"])*2.55);
                     if(db_color.hasOwnProperty("gM")) color.g = uint(Number(db_color["gM"])*2.55);
                     if(db_color.hasOwnProperty("bM")) color.b = uint(Number(db_color["bM"])*2.55);
-                    var colorDec:uint = toDec(color.r,color.g,color.b,color.a);
+                    var colorDec:String = rgbaToHex(color.r,color.g,color.b,color.a);
                     if(curve){
                         spine_color.push({
                             "time":during,
@@ -397,7 +409,7 @@ public class ParseJson {
             }
             if(spine_attachment.length>0||spine_color.length>0){
                 var spine_slot:Object = new Object();
-                db_animSlotArr[db_animSlotObj["name"]] = spine_slot;
+                spine_bonesArr[db_animSlotObj["name"]] = spine_slot;
 
                 if(spine_attachment.length>0){
                     spine_slot["attachment"]=spine_attachment;
@@ -516,21 +528,17 @@ public class ParseJson {
         }
     }
 
-    /**
-     * 合并A，R，G，B颜色通道
-     * @param      r  红色通道
-     * @param      g  绿色通道
-     * @param      b  蓝色通道
-     * @param      a  透明度
-     * @return
-     */
-    public static function toDec(r:uint, g:uint, b:uint, a:uint = 255):uint
+
+    public static function rgbaToHex(r:uint, g:uint, b:uint, a:uint):String
     {
-        var sa:uint = a << 24;
-        var sr:uint = r << 16;
-        var sg:uint = g << 8;
-        return sa | sr | sg | b;
+        var s = (r << 16 | g << 8 | b).toString(16);
+        while(s.length < 6) s="0"+s;
+        s+=a.toString(16);
+        while(s.length < 8) s=s+"0";
+        return s;
     }
+
+
 
     public static function getNumber(dic:Object,key:String,defaultValue:Number):Number{
         if(dic.hasOwnProperty(key)){
