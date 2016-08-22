@@ -474,17 +474,14 @@ public class ParseJson {
                     }
                     else
                     {
-                        if(spine_translate.length==0||spine_translate[spine_translate.length-1].x!=0||spine_translate[spine_translate.length-1].y!=0)
-                        {
-                            if(curve){
-                                spine_translate.push({
-                                    "x":0, "y":0,  "time":during,  "curve":curve
-                                });
-                            }else{
-                                spine_translate.push({
-                                    "x":0,  "y":0,  "time":during
-                                });
-                            }
+                        if(curve){
+                            spine_translate.push({
+                                "x":0, "y":0,  "time":during,  "curve":curve
+                            });
+                        }else{
+                            spine_translate.push({
+                                "x":0,  "y":0,  "time":during
+                            });
                         }
                     }
 
@@ -503,16 +500,14 @@ public class ParseJson {
                     }
                     else
                     {
-                        if(spine_rotate.length==0 || spine_rotate[spine_rotate.length-1].angle!=0){
-                            if(curve){
-                                spine_rotate.push({
-                                    "angle":0 , "time":during, "curve":curve
-                                });
-                            }else{
-                                spine_rotate.push({
-                                    "angle":0 , "time":during
-                                });
-                            }
+                        if(curve){
+                            spine_rotate.push({
+                                "angle":0 , "time":during, "curve":curve
+                            });
+                        }else{
+                            spine_rotate.push({
+                                "angle":0 , "time":during
+                            });
                         }
                     }
 
@@ -533,16 +528,14 @@ public class ParseJson {
                     }
                     else
                     {
-                        if(spine_scale.length==0 || spine_scale[spine_scale.length-1].x!=1 || spine_scale[spine_scale.length-1].y!=1 ){
-                            if(curve){
-                                spine_scale.push({
-                                    "x":1,  "y":1, "time":during, "curve":curve
-                                });
-                            }else{
-                                spine_scale.push({
-                                    "x":1, "y":1, "time":during
-                                });
-                            }
+                        if(curve){
+                            spine_scale.push({
+                                "x":1,  "y":1, "time":during, "curve":curve
+                            });
+                        }else{
+                            spine_scale.push({
+                                "x":1, "y":1, "time":during
+                            });
                         }
                     }
                 }
