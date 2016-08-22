@@ -411,6 +411,20 @@ public class ParseJson {
                         });
                     }
                 }
+                else
+                {
+                    if(spine_color.length==0 ||j==frames_len-1|| spine_color[spine_color.length-1].color!="ffffffff"){
+                        if(curve){
+                            spine_color.push({
+                                "time":during, "color":"ffffffff",  "curve":curve
+                            });
+                        }else {
+                            spine_color.push({
+                                "time": during, "color": "ffffffff"
+                            });
+                        }
+                    }
+                }
 
                 during += _perKeyTime*frame["duration"];
                 curve = null;
@@ -474,14 +488,17 @@ public class ParseJson {
                     }
                     else
                     {
-                        if(curve){
-                            spine_translate.push({
-                                "x":0, "y":0,  "time":during,  "curve":curve
-                            });
-                        }else{
-                            spine_translate.push({
-                                "x":0,  "y":0,  "time":during
-                            });
+                        if(spine_translate.length==0 || j==frames_len-1 ||spine_translate[spine_translate.length-1].x!=0||spine_translate[spine_translate.length-1].y!=0)
+                        {
+                            if(curve){
+                                spine_translate.push({
+                                    "x":0, "y":0,  "time":during,  "curve":curve
+                                });
+                            }else{
+                                spine_translate.push({
+                                    "x":0,  "y":0,  "time":during
+                                });
+                            }
                         }
                     }
 
@@ -500,14 +517,16 @@ public class ParseJson {
                     }
                     else
                     {
-                        if(curve){
-                            spine_rotate.push({
-                                "angle":0 , "time":during, "curve":curve
-                            });
-                        }else{
-                            spine_rotate.push({
-                                "angle":0 , "time":during
-                            });
+                        if(spine_rotate.length==0 || j==frames_len-1 || spine_rotate[spine_rotate.length-1].angle!=0){
+                            if(curve){
+                                spine_rotate.push({
+                                    "angle":0 , "time":during, "curve":curve
+                                });
+                            }else{
+                                spine_rotate.push({
+                                    "angle":0 , "time":during
+                                });
+                            }
                         }
                     }
 
@@ -528,14 +547,16 @@ public class ParseJson {
                     }
                     else
                     {
-                        if(curve){
-                            spine_scale.push({
-                                "x":1,  "y":1, "time":during, "curve":curve
-                            });
-                        }else{
-                            spine_scale.push({
-                                "x":1, "y":1, "time":during
-                            });
+                        if(spine_scale.length==0  || j==frames_len-1 || spine_scale[spine_scale.length-1].x!=1 || spine_scale[spine_scale.length-1].y!=1 ){
+                            if(curve){
+                                spine_scale.push({
+                                    "x":1,  "y":1, "time":during, "curve":curve
+                                });
+                            }else{
+                                spine_scale.push({
+                                    "x":1, "y":1, "time":during
+                                });
+                            }
                         }
                     }
                 }
