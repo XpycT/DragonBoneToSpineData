@@ -168,16 +168,21 @@ public class ParseJson {
                 spine_slots.push(spine_slot);
 
                 var db_slot:Object = db_slots[i];
-                if(db_slot.hasOwnProperty("name")){ //slot name
-                    var slotName:String = db_slot["name"].toString();
-                    spine_slot["name"] = slotName;
-                    if(_defaultSkinsSlotKV.hasOwnProperty(slotName)){
-                        spine_slot["attachment"] = _defaultSkinsSlotKV[slotName][0].name;
-                    }else{
-                        spine_slot["attachment"]=null;
-                    }
-                    _slotsKV[slotName] = db_slot;
+                //slot name
+                var slotName:String = db_slot["name"].toString();
+                spine_slot["name"] = slotName;
+                _slotsKV[slotName] = db_slot;
+
+                var displayIndex:int = 0;
+                if(db_slot.hasOwnProperty("displayIndex")){
+                    displayIndex = int(db_slot["displayIndex"]);
                 }
+                if(displayIndex>-1){
+                    if(_defaultSkinsSlotKV.hasOwnProperty(slotName)){
+                        spine_slot["attachment"] = _defaultSkinsSlotKV[slotName][displayIndex].name;
+                    }
+                }
+
                 if(db_slot.hasOwnProperty("parent")){ //parent bone name
                     spine_slot["bone"] = db_slot["parent"].toString();
                 }
@@ -365,22 +370,29 @@ public class ParseJson {
                         }
                     }
                 }
+                var slotName:String = db_animSlotObj["name"];
+
+                var displayIndex:int = 0;
                 if(frame.hasOwnProperty("displayIndex")){
-                    var slotName:String = db_animSlotObj["name"];
-                    var index:int = int(frame["displayIndex"]);
-                    if(index==-1){
+                    displayIndex = int(frame["displayIndex"]);
+                }
+                if(displayIndex==-1){
+                    if(spine_attachment.length==0 || spine_attachment[spine_attachment.length-1].name!=null){
                         spine_attachment.push({
                             "time":during,
                             "name":null
                         });
-                    }else{
-                        var attachment:String = _defaultSkinsSlotKV[slotName][index].name;
+                    }
+                }else{
+                    var attachment:String = _defaultSkinsSlotKV[slotName][displayIndex].name;
+                    if(spine_attachment.length==0 || spine_attachment[spine_attachment.length-1].name!=attachment){
                         spine_attachment.push({
                             "time":during,
                             "name":attachment
                         });
                     }
                 }
+
                 if(frame.hasOwnProperty("color")){
                     var db_color:Object = frame["color"];
                     var color:Object = {
@@ -397,13 +409,14 @@ public class ParseJson {
                             "color":colorDec,
                             "curve":curve
                         });
-                    }else{
+                    }else {
                         spine_color.push({
-                            "time":during,
-                            "color":colorDec
+                            "time": during,
+                            "color": colorDec
                         });
                     }
                 }
+
                 during += _perKeyTime*frame["duration"];
                 curve = null;
             }
@@ -533,9 +546,9 @@ public class ParseJson {
     {
         var s = (r << 16 | g << 8 | b).toString(16);
         while(s.length < 6) s="0"+s;
-        s+=a.toString(16);
-        while(s.length < 8) s=s+"0";
-        return s;
+        var sa = a.toString(16);
+        while(sa.length < 2) sa="0"+sa;
+        return s+sa;
     }
 
 
