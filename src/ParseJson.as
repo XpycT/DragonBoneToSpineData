@@ -379,16 +379,14 @@ public class ParseJson {
                 if(displayIndex==-1){
                     if(spine_attachment.length==0 || spine_attachment[spine_attachment.length-1].name!=null){
                         spine_attachment.push({
-                            "time":during,
-                            "name":null
+                            "time":during, "name":null
                         });
                     }
                 }else{
                     var attachment:String = _defaultSkinsSlotKV[slotName][displayIndex].name;
                     if(spine_attachment.length==0 || spine_attachment[spine_attachment.length-1].name!=attachment){
                         spine_attachment.push({
-                            "time":during,
-                            "name":attachment
+                            "time":during, "name":attachment
                         });
                     }
                 }
@@ -405,14 +403,11 @@ public class ParseJson {
                     var colorDec:String = rgbaToHex(color.r,color.g,color.b,color.a);
                     if(curve){
                         spine_color.push({
-                            "time":during,
-                            "color":colorDec,
-                            "curve":curve
+                            "time":during, "color":colorDec,  "curve":curve
                         });
                     }else {
                         spine_color.push({
-                            "time": during,
-                            "color": colorDec
+                            "time": during, "color": colorDec
                         });
                     }
                 }
@@ -469,54 +464,85 @@ public class ParseJson {
                         if(!py) py=0;
                         if(curve){
                             spine_translate.push({
-                                "x":px,
-                                "y":py,
-                                "time":during,
-                                "curve":curve
+                                "x":px, "y":py, "time":during, "curve":curve
                             });
                         }else{
                             spine_translate.push({
-                                "x":px,
-                                "y":py,
-                                "time":during
+                                "x":px, "y":py, "time":during
                             });
                         }
                     }
+                    else
+                    {
+                        if(spine_translate.length==0||spine_translate[spine_translate.length-1].x!=0||spine_translate[spine_translate.length-1].y!=0)
+                        {
+                            if(curve){
+                                spine_translate.push({
+                                    "x":0, "y":0,  "time":during,  "curve":curve
+                                });
+                            }else{
+                                spine_translate.push({
+                                    "x":0,  "y":0,  "time":during
+                                });
+                            }
+                        }
+                    }
+
                     if(transform.hasOwnProperty("skX")){
                         var angle:Number = -Number(transform["skX"]);
                         if(!angle) angle=0;
                         if(curve){
                             spine_rotate.push({
-                                "angle":angle ,
-                                "time":during,
-                                "curve":curve
+                                "angle":angle ,  "time":during, "curve":curve
                             });
                         }else{
                             spine_rotate.push({
-                                "angle":angle ,
-                                "time":during
+                                "angle":angle ,  "time":during
                             });
                         }
-
                     }
+                    else
+                    {
+                        if(spine_rotate.length==0 || spine_rotate[spine_rotate.length-1].angle!=0){
+                            if(curve){
+                                spine_rotate.push({
+                                    "angle":0 , "time":during, "curve":curve
+                                });
+                            }else{
+                                spine_rotate.push({
+                                    "angle":0 , "time":during
+                                });
+                            }
+                        }
+                    }
+
                     if(transform.hasOwnProperty("scX")||transform.hasOwnProperty("scY")){
                         var scx:Number = Number(transform["scX"]);
                         var scy:Number = Number(transform["scY"]);
-                        if(!scx) scx=0;
-                        if(!scy) scy=0;
+                        if(!scx) scx=1;
+                        if(!scy) scy=1;
                         if(curve){
                             spine_scale.push({
-                                "x":scx,
-                                "y":scy,
-                                "time":during,
-                                "curve":curve
+                                "x":scx, "y":scy,  "time":during, "curve":curve
                             });
                         }else{
                             spine_scale.push({
-                                "x":scx,
-                                "y":scy,
-                                "time":during
+                                "x":scx, "y":scy, "time":during
                             });
+                        }
+                    }
+                    else
+                    {
+                        if(spine_scale.length==0 || spine_scale[spine_scale.length-1].x!=1 || spine_scale[spine_scale.length-1].y!=1 ){
+                            if(curve){
+                                spine_scale.push({
+                                    "x":1,  "y":1, "time":during, "curve":curve
+                                });
+                            }else{
+                                spine_scale.push({
+                                    "x":1, "y":1, "time":during
+                                });
+                            }
                         }
                     }
                 }
