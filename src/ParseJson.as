@@ -243,8 +243,16 @@ public class ParseJson {
                                 spine_slot[display["name"]] = spine_display;
 
                                 //width,height
-                                spine_display["width"] = _textureKV[display["name"]].width;
-                                spine_display["height"] = _textureKV[display["name"]].height;
+                                if(display.hasOwnProperty("width")){
+                                    spine_display["width"] = display["width"];
+                                }else{
+                                    spine_display["width"] = _textureKV[display["name"]].width;
+                                }
+                                if(display.hasOwnProperty("height")){
+                                    spine_display["height"] = display["height"];
+                                }else{
+                                    spine_display["height"] = _textureKV[display["name"]].height;
+                                }
 
                                 if(display.hasOwnProperty("type") && display["type"]!="image"){ //类型
                                     var type:String = "mesh";
@@ -304,7 +312,13 @@ public class ParseJson {
                                         }
                                         spine_display["vertices"] = spine_vertices;
                                     }else{
-                                        spine_display["vertices"] = vertices;
+                                        var vertices_len:uint = vertices.length;
+                                        var spine_vertices:Array = [];
+                                        for(var k:uint = 0;k<vertices_len;k+=2){
+                                            spine_vertices.push(vertices[k]);//vertexX
+                                            spine_vertices.push(-vertices[k+1]);//vertexY
+                                        }
+                                        spine_display["vertices"] = spine_vertices;
                                     }
                                 }
                             }
