@@ -2,6 +2,8 @@
  * Created by zhouzhanglin on 16/8/19.
  */
 package {
+import flash.display.DisplayObjectContainer;
+import flash.display.Sprite;
 import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.utils.Dictionary;
@@ -10,6 +12,7 @@ import utils.MD5;
 
 public class ParseJson {
     public function ParseJson() {
+
     }
 
     private var _textureData:String;//spine的材质数据
@@ -21,6 +24,7 @@ public class ParseJson {
 
     private var _bonesKV:Dictionary = null; //key为bone name ,value为dragonBone数据
     private var _slotsKV:Dictionary = null; //key为slot name ,value为dragonBone数据
+    private var _displayModel:Sprite = null ;//用于模拟树状
 
     public function get spineData():Object{
         return _spineData;
@@ -97,16 +101,86 @@ public class ParseJson {
                 _defaultSkinsSlotKV = new Dictionary();
                 _bonesKV = new Dictionary();
                 _slotsKV = new Dictionary();
-                parseSkins();
-                parseBones();
-                parseSlots();
-                parseAnims();
+                _displayModel = new Sprite();
+                parseSlotAndBone();
+                convertSkinsData();
+                convertBones();
+                convertSlots();
+                convertAnims();
                 break;
             }
         }
     }
 
-    private function parseBones():void{
+    private function parseSlotAndBone():void{
+        if(_armatureObj.hasOwnProperty("bone")) {
+            var db_bones:Array = _armatureObj["bone"] as Array;
+            var db_bones_len:uint = db_bones.length;
+            for(var i:int=0;i<db_bones_len;++i){
+                var db_bone:Object = db_bones[i];
+
+                db_bone["tx"]=  db_bone["ty"] =  db_bone["angle"] = 0;
+                db_bone["sx"]=  db_bone["sy"] =  1;
+
+                if(db_bone.hasOwnProperty("transform")){ //transform
+                    var transform:Object = db_bone["transform"];
+                    if(transform.hasOwnProperty("x")) db_bone["tx"] = Number(transform["x"]);
+                    if(transform.hasOwnProperty("y")) db_bone["ty"] = Number(transform["y"]);
+                    if(transform.hasOwnProperty("skX")) db_bone["angle"] = Number(transform["skX"]);
+                    if(transform.hasOwnProperty("scX")) db_bone["sx"] = Number(transform["scX"]);
+                    if(transform.hasOwnProperty("scY")) db_bone["sy"] = Number(transform["scY"]);
+                }
+
+                var displayBone:Sprite = new Sprite();
+                displayBone.rotation = db_bone["angle"];
+                displayBone.scaleX = db_bone["sx"];
+                displayBone.scaleY = db_bone["sy"];
+                displayBone.x = db_bone["tx"];
+                displayBone.y = db_bone["ty"];
+                db_bone["displayBone"] = displayBone;
+
+                var boneName:String = db_bone["name"].toString();
+                _bonesKV[boneName] = db_bone;
+            }
+        }
+
+        if(_armatureObj.hasOwnProperty("slot")){
+            var db_slots:Array = _armatureObj["slot"] as Array;
+            var db_slots_len:uint = db_slots.length;
+            for(var i:int = 0;i<db_slots_len;++i){
+
+                var db_slot:Object = db_slots[i];
+
+                //slot name
+                var slotName:String = db_slot["name"].toString();
+                _slotsKV[slotName] = db_slot;
+
+                if(db_slot.hasOwnProperty("parent")){ //parent bone name
+                     var displaySlot:Sprite = new Sprite();
+                    (_bonesKV[db_slot["parent"]]["displayBone"] as Sprite).addChild(displaySlot);
+
+                    db_slot["displaySlot"] = displaySlot;
+                }
+            }
+        }
+
+        //设置bone的层级
+        if(_armatureObj.hasOwnProperty("bone")) {
+            var db_bones:Array = _armatureObj["bone"] as Array;
+            var db_bones_len:uint = db_bones.length;
+            for (var i:int = 0; i < db_bones_len; ++i) {
+                var db_bone:Object = db_bones[i];
+
+                if(db_bone.hasOwnProperty("parent")) { //parent bone name
+                    (_bonesKV[db_bone["parent"]]["displayBone"] as Sprite).addChild(db_bone["displayBone"] as Sprite);
+                }else{
+                    _displayModel = db_bone["displayBone"] as Sprite;
+                }
+            }
+        }
+    }
+
+    private function convertBones():void{
         if(_armatureObj.hasOwnProperty("bone")) {
             var spine_bones:Array = [];
             _spineData["bones"] = spine_bones;
@@ -121,7 +195,6 @@ public class ParseJson {
                 if(db_bone.hasOwnProperty("name")){ //骨骼名字
                     var boneName:String = db_bone["name"].toString();
                     spine_bone["name"] = boneName;
-                    _bonesKV[boneName] = db_bone;
                 }
                 if(db_bone.hasOwnProperty("parent")){//骨骼的父骨骼
                     var parentBoneName:String = db_bone["parent"].toString();
@@ -156,7 +229,7 @@ public class ParseJson {
 
     }
 
-    private function parseSlots():void{
+    private function convertSlots():void{
         if(_armatureObj.hasOwnProperty("slot")){
             var spine_slots:Array = [];
             _spineData["slots"] = spine_slots;
@@ -171,7 +244,6 @@ public class ParseJson {
                 //slot name
                 var slotName:String = db_slot["name"].toString();
                 spine_slot["name"] = slotName;
-                _slotsKV[slotName] = db_slot;
 
                 var displayIndex:int = 0;
                 if(db_slot.hasOwnProperty("displayIndex")){
@@ -204,7 +276,7 @@ public class ParseJson {
         }
     }
 
-    private function parseSkins():void{
+    private function convertSkinsData():void{
         if(_armatureObj.hasOwnProperty("skin")){
             var spine_skins:Object=new Object();
             _spineData["skins"] = spine_skins;
@@ -228,7 +300,9 @@ public class ParseJson {
                         var db_slot:Object = db_slots[j];
 
                         var spine_slot:Object = new Object();
-                        spine_skin[db_slot["name"]] = spine_slot;
+                        var slotName:String = db_slot["name"].toString();
+                        spine_skin[slotName] = spine_slot;
+                        var slotDisplay:Sprite = _slotsKV[slotName]["displaySlot"] as Sprite;
 
                         if(db_slot.hasOwnProperty("display")){
                             var displays:Array = db_slot["display"] as Array;//此slot中的对象
@@ -239,42 +313,73 @@ public class ParseJson {
                             for(var z:uint=0;z<displays_len;++z){
                                 var display:Object = displays[z];
 
-                                var spine_display:Object = new Object();
-                                spine_slot[display["name"]] = spine_display;
+                                var spine_attachment:Object = new Object();
+                                var attachment:String = display["name"].toString();
+                                spine_slot[attachment] = spine_attachment;
 
                                 //width,height
                                 if(display.hasOwnProperty("width")){
-                                    spine_display["width"] = display["width"];
+                                    spine_attachment["width"] = display["width"];
                                 }else{
-                                    spine_display["width"] = _textureKV[display["name"]].width;
+                                    spine_attachment["width"] = _textureKV[display["name"]].width;
                                 }
                                 if(display.hasOwnProperty("height")){
-                                    spine_display["height"] = display["height"];
+                                    spine_attachment["height"] = display["height"];
                                 }else{
-                                    spine_display["height"] = _textureKV[display["name"]].height;
+                                    spine_attachment["height"] = _textureKV[display["name"]].height;
                                 }
+
+                                var isImage:Boolean = true;
 
                                 if(display.hasOwnProperty("type") && display["type"]!="image"){ //类型
                                     var type:String = "mesh";
                                     if(display["type"]=="mesh" && display.hasOwnProperty("weights")){
                                         type="weightedmesh";
                                     }
-                                    spine_display["type"]=type;
+                                    spine_attachment["type"]=type;
+                                    isImage = false;
                                 }
+
+                                var tx:Number,ty:Number,sx:Number,sy:Number,angle:Number;
+                                tx=ty=angle=0;
+                                sx=sy = 1;
                                 if(display.hasOwnProperty("transform")){ //transform
                                     var transform:Object = display["transform"];
-                                    if(transform.hasOwnProperty("x")) spine_display["x"] = Number(transform["x"]);
-                                    if(transform.hasOwnProperty("y")) spine_display["y"] = -Number(transform["y"]);
-                                    if(transform.hasOwnProperty("skX")) spine_display["rotation"] = -Number(transform["skX"]);
-                                    if(transform.hasOwnProperty("scX")) spine_display["scaleX"] = Number(transform["scX"]);
-                                    if(transform.hasOwnProperty("scY")) spine_display["scaleY"] = Number(transform["scY"]);
+                                    if(transform.hasOwnProperty("x")) {
+                                        tx = Number(transform["x"]);
+                                        if(isImage) spine_attachment["x"] = tx;
+                                    }
+                                    if(transform.hasOwnProperty("y")) {
+                                        ty = Number(transform["y"]);
+                                        if(isImage) spine_attachment["y"] = -ty;
+                                    }
+                                    if(transform.hasOwnProperty("skX")) {
+                                        angle = Number(transform["skX"]);
+                                        if(isImage) spine_attachment["rotation"] = -angle;
+                                    }
+                                    if(transform.hasOwnProperty("scX")) {
+                                        sx = Number(transform["scX"]);
+                                        if(isImage) spine_attachment["scaleX"] = sx;
+                                    }
+                                    if(transform.hasOwnProperty("scY")) {
+                                        sy = Number(transform["scY"]);
+                                        if(isImage) spine_attachment["scaleY"] = sy;
+                                    }
                                 }
-                                if(display.hasOwnProperty("edges")) spine_display["edges"] = display["edges"];
-                                if(display.hasOwnProperty("uvs")) spine_display["uvs"] = display["uvs"];
+                                var displayAttach:Sprite = new Sprite();
+                                displayAttach.rotation = angle;
+                                displayAttach.x = tx;
+                                displayAttach.y = ty;
+                                displayAttach.scaleX = sx;
+                                displayAttach.scaleY = sy;
+                                slotDisplay.addChild(displayAttach);
+
+                                if(display.hasOwnProperty("edges")) spine_attachment["edges"] = display["edges"];
+                                if(display.hasOwnProperty("uvs")) spine_attachment["uvs"] = display["uvs"];
                                 if(display.hasOwnProperty("triangles")) {
                                     var triangles:Array = display["triangles"] as Array;
-                                    spine_display["triangles"] = triangles;
-                                    spine_display["hull"] = triangles.length/3;
+                                    spine_attachment["triangles"] = triangles;
+                                    spine_attachment["hull"] = triangles.length/3;
                                 }
                                 if(display.hasOwnProperty("vertices"))
                                 {
@@ -310,15 +415,20 @@ public class ParseJson {
                                             spine_vertices.push(-p.y);//绑定的y
                                             spine_vertices.push(db_weights[wIndex+2]);//权重
                                         }
-                                        spine_display["vertices"] = spine_vertices;
+                                        spine_attachment["vertices"] = spine_vertices;
                                     }else{
                                         var vertices_len:uint = vertices.length;
                                         var spine_vertices:Array = [];
+                                        var mat:Matrix = new Matrix();
+                                        mat.concat(displayAttach.transform.matrix);
+                                        mat.concat(displayAttach.parent.transform.matrix);
+
                                         for(var k:uint = 0;k<vertices_len;k+=2){
-                                            spine_vertices.push(vertices[k]);//vertexX
-                                            spine_vertices.push(-vertices[k+1]);//vertexY
+                                            var p:Point = mat.transformPoint(new Point(vertices[k],vertices[k+1]));
+                                            spine_vertices.push(p.x);//vertexX
+                                            spine_vertices.push(-p.y);//vertexY
                                         }
-                                        spine_display["vertices"] = spine_vertices;
+                                        spine_attachment["vertices"] = spine_vertices;
                                     }
                                 }
                             }
@@ -329,7 +439,7 @@ public class ParseJson {
         }
     }
 
-    private function parseAnims():void{
+    private function convertAnims():void{
         if(_armatureObj.hasOwnProperty("animation")){
             var spine_Anims:Object=new Object();
             _spineData["animations"] = spine_Anims;
