@@ -82,8 +82,10 @@ public class ParseJson {
     public function parseAnimJson(json:String):void
     {
         var jsonObject:Object = JSON.parse(json);
-        if(jsonObject.hasOwnProperty("frameRate")){
+        if(jsonObject.hasOwnProperty("frameRate") && int(jsonObject["frameRate"]>0)){
             _perKeyTime = 1/jsonObject["frameRate"];
+        }else{
+            _perKeyTime = 1/24;
         }
         _spineData = new Object();
         _spineData["skeleton"] = new Object();
@@ -95,7 +97,7 @@ public class ParseJson {
             var armatures:Array = jsonObject["armature"] as Array;
             for(var i:int=0;i<armatures.length;++i){
                 _armatureObj = armatures[i];
-                if(_armatureObj.hasOwnProperty("frameRate")){
+                if(_armatureObj.hasOwnProperty("frameRate") && int(_armatureObj["frameRate"]>0)){
                     _perKeyTime = 1/_armatureObj["frameRate"];
                 }
                 _defaultSkinsSlotKV = new Dictionary();
@@ -571,7 +573,8 @@ public class ParseJson {
                                 spine_frame["vertices"]=spine_vertices;
                             }
                         }
-                        during += _perKeyTime*frame["duration"];
+                        var frame_dur:int = frame.hasOwnProperty("duration") ? int(frame["duration"]) : 1;
+                        during += _perKeyTime*frame_dur;
                     }
                 }
             }
@@ -661,7 +664,8 @@ public class ParseJson {
                     }
                 }
 
-                during += _perKeyTime*frame["duration"];
+                var frame_dur:int = frame.hasOwnProperty("duration") ? int(frame["duration"]) : 1;
+                during += _perKeyTime*frame_dur;
                 curve = null;
             }
             if(spine_attachment.length>0||spine_color.length>0){
@@ -795,7 +799,8 @@ public class ParseJson {
                         }
                     }
                 }
-                during += _perKeyTime*frame["duration"];
+                var frame_dur:int = frame.hasOwnProperty("duration") ? int(frame["duration"]) : 1;
+                during += _perKeyTime*frame_dur;
                 curve = null;
             }
 
