@@ -307,7 +307,7 @@ public class ParseJson {
                         if(db_slot.hasOwnProperty("display")){
                             var displays:Array = db_slot["display"] as Array;//此slot中的对象
                             if(i==0){
-                                _defaultSkinsSlotKV[db_slot["name"]] = displays;
+                                _defaultSkinsSlotKV[slotName] = displays;
                             }
                             var displays_len:uint = displays.length;
                             for(var z:uint=0;z<displays_len;++z){
@@ -316,6 +316,8 @@ public class ParseJson {
                                 var spine_attachment:Object = new Object();
                                 var attachment:String = display["name"].toString();
                                 spine_slot[attachment] = spine_attachment;
+
+                                _slotsKV[slotName][attachment] = display;
 
                                 //width,height
                                 if(display.hasOwnProperty("width")){
@@ -372,6 +374,7 @@ public class ParseJson {
                                 displayAttach.y = ty;
                                 displayAttach.scaleX = sx;
                                 displayAttach.scaleY = sy;
+                                displayAttach.name = attachment;
                                 slotDisplay.addChild(displayAttach);
 
                                 if(display.hasOwnProperty("edges")) spine_attachment["edges"] = display["edges"];
@@ -464,7 +467,115 @@ public class ParseJson {
 
                     parseSlotAnims(db_animObj,spine_slotArr);
                 }
+                if(db_animObj.hasOwnProperty("ffd")){
+                    var spine_ffdArr:Object = new Object();
+                    spine_animObj["ffd"] = spine_ffdArr;
+
+                    parseFFDAnims(db_animObj,spine_ffdArr);
+                }
             }
+        }
+    }
+
+    private function parseFFDAnims(db_animObj:Object,spine_ffdArr:Object):void{
+        var db_animFFDArr:Array = db_animObj["ffd"] as Array;
+        var db_animFFDArr_len:uint = db_animFFDArr.length;
+        for(var i:uint = 0 ;i<db_animFFDArr_len ;++i){
+            var db_animFFDObj:Object = db_animFFDArr[i];
+            if(db_animFFDObj.hasOwnProperty("frame")){
+                var frames:Array = db_animFFDObj["frame"] as Array;
+                if(frames.length>0)
+                {
+                    //skin
+                    var db_skin:String = db_animFFDObj["skin"];
+                    if(!db_skin) db_skin="default";
+
+                    var spine_skinObj:Object = null;
+                    if(spine_ffdArr.hasOwnProperty(db_skin)){
+                        spine_skinObj = spine_ffdArr[db_skin];
+                    }else{
+                        spine_skinObj = new Object();
+                        spine_ffdArr[db_skin] = spine_skinObj;
+                    }
+
+                    //slot
+                    var db_slot_name:String = db_animFFDObj["slot"];
+                    var spine_slotObj:Object=null;
+                    if(spine_skinObj.hasOwnProperty(db_slot_name)){
+                        spine_slotObj=spine_skinObj[db_slot_name];
+                    }else{
+                        spine_slotObj=  new Object();
+                        spine_skinObj[db_slot_name] = spine_slotObj;
+                    }
+
+                    //mesh
+                    var db_display_name:String = db_animFFDObj["name"];
+                    if(!db_display_name) db_display_name = db_slot_name;
+
+                    var spine_meshArr:Array =null;
+                    if(spine_slotObj.hasOwnProperty(db_display_name)){
+                        spine_meshArr = spine_slotObj[db_display_name];
+                    }else{
+                        spine_meshArr = [];
+                        spine_slotObj[db_display_name] = spine_meshArr;
+                    }
+
+                    var displayAttach:Sprite=(_slotsKV[db_slot_name]["displaySlot"] as Sprite).getChildByName(db_display_name) as Sprite;
+                    var mat:Matrix = new Matrix();
+                    mat.concat(displayAttach.transform.matrix);
+                    mat.concat(displayAttach.parent.transform.matrix);
+                    var db_display_data:Object = _slotsKV[db_slot_name][db_display_name];//原始skin数据
+                    var poseVertices:Array = db_display_data["vertices"] as Array;//原始顶点
+
+                    var frames_len:uint = frames.length;
+                    var during:Number = 0;
+                    for(var j:uint = 0 ;j<frames_len ; ++j){
+                        var frame:Object = frames[j];
+                        if(frame.hasOwnProperty("vertices")){
+
+                            var spine_frame:Object = new Object();
+                            spine_meshArr.push(spine_frame);
+
+                            spine_frame["time"] = during;
+
+                            if(j<frames_len-1){
+                                if(frame.hasOwnProperty("curve")){
+                                    spine_frame["curve"]=frame["curve"];
+                                }else if(frame.hasOwnProperty("tweenEasing")){
+                                    if(frame["tweenEasing"]==null){
+                                        spine_frame["curve"] = "stepped";
+                                    }
+                                }
+                            }
+                            var vertices:Array = frame["vertices"] as Array;
+                            var vertices_len:uint = vertices.length;
+                            if(vertices_len>0){
+                                var offset:int = 0;
+                                if(frame.hasOwnProperty("offset")){
+                                    offset = spine_frame["offset"] = int(frame["offset"]);
+                                }
+
+                                var spine_vertices:Array = [];
+                                for(var k:uint = 0;k<vertices_len;k+=2){
+                                    //pose中的顶点位置
+                                    var orginPoint:Point = new Point(poseVertices[offset+k],poseVertices[offset+k+1]);
+                                    //现在的位置
+                                    var currentPoint:Point = new Point(orginPoint.x+vertices[k],orginPoint.y+vertices[k+1]);
+                                    //转换
+                                    orginPoint = mat.transformPoint(orginPoint);
+                                    currentPoint = mat.transformPoint(currentPoint);
+                                    //重新设置位移
+                                    spine_vertices.push(currentPoint.x-orginPoint.x);
+                                    spine_vertices.push(orginPoint.y-currentPoint.y);
+                                }
+                                spine_frame["vertices"]=spine_vertices;
+                            }
+                        }
+                        during += _perKeyTime*frame["duration"];
+                    }
+                }
+            }
+
         }
     }
 
