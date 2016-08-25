@@ -25,6 +25,7 @@ public class ParseJson {
     private var _bonesKV:Dictionary = null; //key为bone name ,value为dragonBone数据
     private var _slotsKV:Dictionary = null; //key为slot name ,value为dragonBone数据
     private var _displayModel:Sprite = null ;//用于模拟树状
+    private var _boneDisplays:Array = null;
 
     public function get spineData():Object{
         return _spineData;
@@ -104,9 +105,10 @@ public class ParseJson {
                 _bonesKV = new Dictionary();
                 _slotsKV = new Dictionary();
                 _displayModel = new Sprite();
+                _boneDisplays= [];
                 parseSlotAndBone();
-                convertSkinsData();
                 convertBones();
+                convertSkinsData();
                 convertSlots();
                 convertAnims();
                 break;
@@ -140,6 +142,8 @@ public class ParseJson {
                 displayBone.x = db_bone["tx"];
                 displayBone.y = db_bone["ty"];
                 db_bone["displayBone"] = displayBone;
+
+                _boneDisplays.push(displayBone);
 
                 var boneName:String = db_bone["name"].toString();
                 _bonesKV[boneName] = db_bone;
@@ -386,10 +390,17 @@ public class ParseJson {
                                     spine_attachment["triangles"] = triangles;
                                     spine_attachment["hull"] = triangles.length/3;
                                 }
+
+
+                                var mat:Matrix = new Matrix();
+                                mat.concat(displayAttach.transform.matrix);
+                                mat.concat(displayAttach.parent.transform.matrix);
+
                                 if(display.hasOwnProperty("vertices"))
                                 {
                                     var vertices:Array = display["vertices"] as Array;
                                     if(display.hasOwnProperty("weights")){
+                                        //spine weight vertices格式:bonecount,boneindex,vx,vy,weight
                                         var slotPoseArr :Array = display["slotPose"] as Array;
                                         var slotPose:Matrix = new Matrix(slotPoseArr[0],slotPoseArr[1],slotPoseArr[2],
                                                 slotPoseArr[3],slotPoseArr[4],slotPoseArr[5]);
@@ -399,34 +410,49 @@ public class ParseJson {
                                         for(var m:uint = 0;m<bonePoseArr.length;m+=7){
                                             var matrix:Matrix=new Matrix(bonePoseArr[m+1],bonePoseArr[m+2],bonePoseArr[m+3],
                                             bonePoseArr[m+4],bonePoseArr[m+5],bonePoseArr[m+6]);
-                                            matrix.invert();
+//                                            matrix.invert();
                                             bonePoseKV["BoneIndex"+bonePoseArr[m]] = matrix;
                                         }
 
                                         var vertices_len:uint = vertices.length;
-                                        var db_weights:Array=display["weights"] as Array;
-                                        var spine_vertices:Array = [];
-                                        for(var k:uint = 0;k<vertices_len;k+=2){
-                                            var p:Point = slotPose.transformPoint(new Point(vertices[k],vertices[k+1]));
-                                            spine_vertices.push(p.x);//vertexX
-                                            spine_vertices.push(-p.y);//vertexY
-
-                                            var wIndex :uint = k/2*3;
-                                            var bIndex:uint = uint(db_weights[wIndex+1]);
-                                            spine_vertices.push(bIndex);//骨骼索引
-                                            var spine_bone:Object = _spineData["bones"][bIndex];
-                                            p = (bonePoseKV["BoneIndex"+bIndex] as Matrix).transformPoint(new Point(spine_bone.x,spine_bone.y));
-                                            spine_vertices.push(p.x);//绑定的x
-                                            spine_vertices.push(-p.y);//绑定的y
-                                            spine_vertices.push(db_weights[wIndex+2]);//权重
+                                        var db_vertices:Vector.<Point> = new Vector.<Point>(vertices_len/2);//db的顶点
+                                        db_vertices.fixed = true;
+                                        for(var k:uint = 0;k<vertices_len;k+=2) {
+                                            db_vertices[k/2] = slotPose.transformPoint(new Point(vertices[k], vertices[k + 1]));
                                         }
-                                        spine_attachment["vertices"] = spine_vertices;
+
+                                        var spine_weight_vertices:Array = [];//spine 的weight数据
+                                        spine_attachment["vertices"] = spine_weight_vertices;
+
+                                        var db_weights:Array=display["weights"] as Array;//db权重
+                                        var db_weights_len:uint=db_weights.length;
+                                        var vertexIndex:uint = 0;
+                                        for(var k:uint = 0 ;k<db_weights_len;++k){
+                                            var boneCount:uint = uint(db_weights[k]);//骨骼数量
+                                            spine_weight_vertices.push(boneCount);
+
+                                            var vertex:Point =db_vertices[vertexIndex];
+
+                                            for(var t:uint=0;t<boneCount*2;t+=2){
+                                                var boneIdx:uint = uint(db_weights[k+t+1]);//骨骼索引
+                                                var weight:Number =db_weights[k+t+2]; //权重
+
+                                                var boneDisplay:Sprite=_boneDisplays[boneIdx] as Sprite;
+                                                var boneMatrix:Matrix = bonePoseKV["BoneIndex"+boneIdx] as Matrix;
+
+                                                vertex = boneMatrix.transformPoint(vertex);
+
+                                                spine_weight_vertices.push(boneIdx);
+                                                spine_weight_vertices.push(vertex.x);
+                                                spine_weight_vertices.push(-vertex.y);
+                                                spine_weight_vertices.push(weight);
+                                            }
+                                            k+=boneCount*2;
+                                            ++vertexIndex;
+                                        }
                                     }else{
                                         var vertices_len:uint = vertices.length;
                                         var spine_vertices:Array = [];
-                                        var mat:Matrix = new Matrix();
-                                        mat.concat(displayAttach.transform.matrix);
-                                        mat.concat(displayAttach.parent.transform.matrix);
 
                                         for(var k:uint = 0;k<vertices_len;k+=2){
                                             var p:Point = mat.transformPoint(new Point(vertices[k],vertices[k+1]));
