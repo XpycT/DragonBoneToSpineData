@@ -7,4 +7,4 @@
 导出的spine数据为3.0格式，新的spine数据还没来得及测试<br/>
 当前只在Unity中测试过。
 #说明
-如果你要使用DragonBone转Unity动画，可以访问此处[DragonBoneToUnity](http://git.oschina.net/bingheliefeng/Drago…)
+如果你要使用DragonBone转Unity动画，可以访问此处[DragonBoneToUnity](http://git.oschina.net/bingheliefeng/DragonBone_Unity)
