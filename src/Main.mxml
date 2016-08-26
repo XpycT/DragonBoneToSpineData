@@ -29,6 +29,7 @@
             } else {
                 _file = null;
             }
+            folderPath.setStyle("text-decoration","none");
         }
 
         private function onClickConvert() {
@@ -78,10 +79,13 @@
                         _file = animFile ;
                         parseJson.parseAnimJson(animJson);
                         saveAnimJsonFile(parseJson.spineData,_file.name);
+
+                        folderPath.setStyle("text-decoration","underline");
+                        folderPath.text = _file.nativePath.substring(0,_file.nativePath.lastIndexOf("/"))+"_spine";
+                        showCompleteTip.play();
                     }
                 }
             }
-            folderPath.text = "";
             _file = null;
         }
 
@@ -124,15 +128,39 @@
             fs.writeMultiByte(data,"utf-8");
             fs.close();
         }
+
+        private function onCickLabel():void{
+            if(folderPath.text.length>0 && folderPath.getStyle("text-decoration")=="underline"){
+                var file:File = new File(folderPath.text);
+                if(file.exists&&file.isDirectory){
+                    file.openWithDefaultApplication();
+                }
+            }
+        }
         ]]></fx:Script>
 
+
+
+    <s:transitions>
+        <s:Transition fromState="*" toState="*">
+            <s:Sequence target="{tips}" id="showCompleteTip" >
+                <s:Move duration="500" yTo="0"/>
+                <s:Move duration="500" yTo="-40" startDelay="1000"/>
+            </s:Sequence>
+        </s:Transition>
+    </s:transitions>
     <s:BorderContainer id="fileContainer" top="20" left="10" right="10" height="200" nativeDragEnter="onDragEnter(event)"
                        nativeDragExit="{fileContainer.setStyle('backgroundColor','#3a3a3a')}"
             nativeDragDrop="onDropFile(event)" >
        <s:Label text="Drag Folder To Here" width="100%" height="100%" mouseEnabled="false"
                 textAlign="center" verticalAlign="middle"/>
     </s:BorderContainer>
-    <s:Label text="" id="folderPath" left="10" right="10" top="230" height="50" />
+    <s:Label text="" id="folderPath" click="onCickLabel()" left="10" right="10" top="230" />
     <s:Button label="Convert"  horizontalCenter="0" left="20" right="20" bottom="10" height="40"
             skinClass="skin.green.GreenButtonSkin" fontWeight="bold" fontSize="15" click="onClickConvert()"/>
+
+    <s:BorderContainer id="tips" y="-40" left="0" right="0" height="30" backgroundColor="#026500">
+        <s:Label text="Convert Complete!" width="100%" height="100%" mouseEnabled="false"
+                 textAlign="center" verticalAlign="middle" />
+    </s:BorderContainer>
 </s:WindowedApplication>

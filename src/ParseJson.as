@@ -2,7 +2,6 @@
  * Created by zhouzhanglin on 16/8/19.
  */
 package {
-import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.geom.Matrix;
 import flash.geom.Point;
@@ -725,9 +724,10 @@ public class ParseJson {
             var during:Number = 0;
             for(var j:uint = 0 ;j<frames_len;++j){
                 var frame:Object = frames[j];
+                var curve:Object = null;
                 if(j<frames_len-1){
                     if(frame.hasOwnProperty("curve")){
-                        var curve:Object=frame["curve"];
+                        curve =frame["curve"];
                     }else if(frame.hasOwnProperty("tweenEasing")){
                         if(frame["tweenEasing"]==null){
                             curve = "stepped";
@@ -764,6 +764,16 @@ public class ParseJson {
                                     "x":0,  "y":0,  "time":during
                                 });
                             }
+                        }else if(j>0){
+                            if(curve){
+                                spine_translate.push({
+                                    "x":0, "y":0, "time":during, "curve":curve
+                                });
+                            }else{
+                                spine_translate.push({
+                                    "x":0, "y":0, "time":during
+                                });
+                            }
                         }
                     }
 
@@ -790,6 +800,18 @@ public class ParseJson {
                             }else{
                                 spine_rotate.push({
                                     "angle":0 , "time":during
+                                });
+                            }
+                        }
+                        else if(j>0)
+                        {
+                            if(curve){
+                                spine_rotate.push({
+                                    "angle":0 ,  "time":during, "curve":curve
+                                });
+                            }else{
+                                spine_rotate.push({
+                                    "angle":0 ,  "time":during
                                 });
                             }
                         }
@@ -823,11 +845,22 @@ public class ParseJson {
                                 });
                             }
                         }
+                        else if(j>0)
+                        {
+                            if(curve){
+                                spine_scale.push({
+                                    "x":1, "y":1,  "time":during, "curve":curve
+                                });
+                            }else{
+                                spine_scale.push({
+                                    "x":1, "y":1, "time":during
+                                });
+                            }
+                        }
                     }
                 }
                 var frame_dur:int = frame.hasOwnProperty("duration") ? int(frame["duration"]) : 1;
                 during += _perKeyTime*frame_dur;
-                curve = null;
             }
 
             if(spine_translate.length>0 || spine_scale.length>0 || spine_rotate.length>0){
