@@ -4,12 +4,7 @@
     <option name="desktopPackageType" value="captive runtime bundle (*.app)" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dd3ce445-0e88-46ff-b890-767fffde6153" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Main.mxml" afterPath="$PROJECT_DIR$/src/Main.mxml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ParseJson.as" afterPath="$PROJECT_DIR$/src/ParseJson.as" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-    </list>
+    <list default="true" id="dd3ce445-0e88-46ff-b890-767fffde6153" name="Default" comment="" />
     <ignored path="DragonBoneToSpineData.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -34,7 +29,7 @@
       <file leaf-file-name="ParseJson.as" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ParseJson.as">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.27272728">
+            <state vertical-scroll-proportion="0.36363637">
               <caret line="541" column="9" selection-start-line="541" selection-start-column="9" selection-end-line="541" selection-end-column="9" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
@@ -511,15 +506,15 @@
       <workItem from="1472218995450" duration="5540000" />
       <workItem from="1472225577387" duration="45000" />
       <workItem from="1472352719074" duration="7486000" />
-      <workItem from="1472387999813" duration="1179000" />
+      <workItem from="1472387999813" duration="1380000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="109609000" />
+    <option name="totallyTimeSpent" value="109810000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="40" y="23" width="1237" height="763" extended-state="0" />
+    <frame x="40" y="23" width="1237" height="763" extended-state="1" />
     <editor active="false" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1197,7 +1192,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ParseJson.as">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27272728">
+        <state vertical-scroll-proportion="0.36363637">
           <caret line="541" column="9" selection-start-line="541" selection-start-column="9" selection-end-line="541" selection-end-column="9" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
