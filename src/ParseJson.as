@@ -14,17 +14,20 @@ public class ParseJson {
 
     }
 
+    private var _armatureName:String;//骨架名称
     private var _textureData:String;//spine的材质数据
     private var _spineData:Object;//spine数据对象，最终会将这个对象生成json
     private var _armatureObj:Object;//dragonBone中的一个armature
     private var _defaultSkinsSlotKV:Dictionary = null;//默认skin ,key为slot name,value为dragonBone display数组
     private var _perKeyTime:Number = 0.02;
     private var _textureKV:Dictionary = null;
+    private var _spine_eventsList:Object = null;
 
     private var _bonesKV:Dictionary = null; //key为bone name ,value为dragonBone数据
     private var _slotsKV:Dictionary = null; //key为slot name ,value为dragonBone数据
     private var _displayModel:Sprite = null ;//用于模拟树状
     private var _boneDisplays:Array = null;
+    private var _jsonObject:Object = null;
 
     public function get spineData():Object{
         return _spineData;
@@ -32,6 +35,12 @@ public class ParseJson {
     public function get textureData():String{
         return _textureData;
     }
+    public function get armatureName():String{
+        return _armatureName;
+    }
+
+    private var _armatureIndex:int = 0;
+    private var _md5:String;
 
     /**
      * 解析材质json
@@ -81,25 +90,48 @@ public class ParseJson {
      */
     public function parseAnimJson(json:String):void
     {
-        var jsonObject:Object = JSON.parse(json);
-        if(jsonObject.hasOwnProperty("frameRate") && int(jsonObject["frameRate"]>0)){
-            _perKeyTime = 1/jsonObject["frameRate"];
+        _armatureIndex = 0;
+        _jsonObject = JSON.parse(json);
+        if(_jsonObject.hasOwnProperty("frameRate") && int(_jsonObject["frameRate"]>0)){
+            _perKeyTime = 1/_jsonObject["frameRate"];
         }else{
             _perKeyTime = 1/24;
         }
-        _spineData = new Object();
-        _spineData["skeleton"] = new Object();
-        _spineData["skeleton"].hash = MD5.hash(json);
-        _spineData["skeleton"].spine="3.3.0";
-        _spineData["skeleton"].images="";
+        _md5 = MD5.hash(json);
+        nextArmature();
+    }
 
-        if(jsonObject.hasOwnProperty("armature")){
-            var armatures:Array = jsonObject["armature"] as Array;
-            for(var i:int=0;i<armatures.length;++i){
+    /**
+     * 是否还有下一个骨架数据
+     * @return
+     */
+    public function hasNextArmature():Boolean{
+        if(_jsonObject.hasOwnProperty("armature")){
+            var armatures:Array = _jsonObject["armature"] as Array;
+            if(_armatureIndex<armatures.length){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function nextArmature(){
+        if(_jsonObject.hasOwnProperty("armature")){
+            var armatures:Array = _jsonObject["armature"] as Array;
+            for(var i:int=_armatureIndex;i<armatures.length;++i){
+                _spineData = new Object();
+                _spineData["skeleton"] = new Object();
+                _spineData["skeleton"].hash = _md5;
+                _spineData["skeleton"].spine="3.3.0";
+                _spineData["skeleton"].images="";
+
+                _spine_eventsList = null;
+
                 _armatureObj = armatures[i];
                 if(_armatureObj.hasOwnProperty("frameRate") && int(_armatureObj["frameRate"]>0)){
                     _perKeyTime = 1/_armatureObj["frameRate"];
                 }
+                _armatureName = _armatureObj["name"];
                 _defaultSkinsSlotKV = new Dictionary();
                 _bonesKV = new Dictionary();
                 _slotsKV = new Dictionary();
@@ -110,9 +142,13 @@ public class ParseJson {
                 convertSkinsData();
                 convertSlots();
                 convertAnims();
+                if(_spine_eventsList!=null){
+                    _spineData["events"] = _spine_eventsList;
+                }
                 break;
             }
         }
+        ++_armatureIndex;
     }
 
     private function parseSlotAndBone():void{
@@ -340,9 +376,6 @@ public class ParseJson {
 
                                 if(display.hasOwnProperty("type") && display["type"]!="image"){ //类型
                                     var type:String = "mesh";
-//                                    if(display["type"]=="mesh" && display.hasOwnProperty("weights")){
-//                                        type="weightedmesh";
-//                                    }
                                     spine_attachment["type"]=type;
                                     isImage = false;
                                 }
@@ -498,7 +531,40 @@ public class ParseJson {
 
                     parseFFDAnims(db_animObj,spine_ffdArr);
                 }
+                if(db_animObj.hasOwnProperty("frame")){ //帧事件
+                    var spine_frame_events:Array = [];
+                    parseFrameEvents(db_animObj,spine_frame_events);
+                    if(spine_frame_events.length>0){
+                        spine_animObj["events"] = spine_frame_events;
+                    }
+                }
             }
+        }
+    }
+
+    private function parseFrameEvents(db_animObj:Object,spine_frame_events:Array):void{
+        var db_events:Array = db_animObj["frame"] as Array;
+        var db_events_len :int = db_events.length;
+
+        var during:Number = 0;
+        for(var i:uint = 0 ;i<db_events_len ;++i) {
+            var db_eventObj:Object = db_events[i];
+            if(db_eventObj.hasOwnProperty("event")){
+                var eventName = db_eventObj["event"];
+                if(_spine_eventsList==null) _spine_eventsList = new Object();
+                _spine_eventsList[eventName] = {};//总的events列表
+
+                //当前帧的event
+                var spine_evt:Object = new Object();
+                spine_evt["time"] = during;
+                spine_evt["name"] = eventName;
+                if(db_eventObj.hasOwnProperty("action")){
+                    spine_evt["string"] = db_eventObj["action"];
+                }
+                spine_frame_events.push(spine_evt);
+            }
+            var frame_dur:int = db_eventObj.hasOwnProperty("duration") ? int(db_eventObj["duration"]) : 1;
+            during += _perKeyTime*frame_dur;
         }
     }
 

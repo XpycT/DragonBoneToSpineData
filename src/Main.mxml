@@ -78,7 +78,11 @@
                     if(animJson){
                         _file = animFile ;
                         parseJson.parseAnimJson(animJson);
-                        saveAnimJsonFile(parseJson.spineData,_file.name);
+                        saveAnimJsonFile(parseJson.spineData,parseJson.armatureName+".json");
+                        while(parseJson.hasNextArmature()){
+                            parseJson.nextArmature();
+                            saveAnimJsonFile(parseJson.spineData,parseJson.armatureName+".json");
+                        }
 
                         folderPath.setStyle("text-decoration","underline");
                         folderPath.text = _file.nativePath.substring(0,_file.nativePath.lastIndexOf("/"))+"_spine";
@@ -107,11 +111,15 @@
             }
             var file:File = new File(dir.nativePath+"/"+name);
 
-            var json:String = JSON.stringify(jsonObj);
-            var fs:FileStream = new FileStream();
-            fs.open(file,FileMode.WRITE);
-            fs.writeMultiByte(json,"utf-8");
-            fs.close();
+            try{
+                var json:String = JSON.stringify(jsonObj);
+                var fs:FileStream = new FileStream();
+                fs.open(file,FileMode.WRITE);
+                fs.writeMultiByte(json,"utf-8");
+                fs.close();
+            }catch(e:Error){
+                Alert.show("Covert json fail!");
+            }
         }
 
         private function saveTextureJsonFile(data:String,name:String):void{
