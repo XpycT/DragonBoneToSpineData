@@ -149,13 +149,14 @@
             </s:Sequence>
         </s:Transition>
     </s:transitions>
+    <s:Label text="DragonBoneData v4.5 to SpineData V3.3" left="10" top="5" color="#ffcc00" />
     <s:BorderContainer id="fileContainer" top="20" left="10" right="10" height="200" nativeDragEnter="onDragEnter(event)"
                        nativeDragExit="{fileContainer.setStyle('backgroundColor','#3a3a3a')}"
             nativeDragDrop="onDropFile(event)" >
-       <s:Label text="Drag Folder To Here" width="100%" height="100%" mouseEnabled="false"
+       <s:Label text="Drag Folder To Here" width="100%" height="100%" mouseEnabled="false" fontSize="24"
                 textAlign="center" verticalAlign="middle"/>
     </s:BorderContainer>
-    <s:Label text="" id="folderPath" click="onCickLabel()" left="10" right="10" top="230" />
+    <s:Label text="" id="folderPath" click="onCickLabel()" left="10" right="10" top="230"/>
     <s:Button label="Convert"  horizontalCenter="0" left="20" right="20" bottom="10" height="40"
             skinClass="skin.green.GreenButtonSkin" fontWeight="bold" fontSize="15" click="onClickConvert()"/>
 

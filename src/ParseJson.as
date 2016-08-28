@@ -90,7 +90,7 @@ public class ParseJson {
         _spineData = new Object();
         _spineData["skeleton"] = new Object();
         _spineData["skeleton"].hash = MD5.hash(json);
-        _spineData["skeleton"].spine="3.1.0";
+        _spineData["skeleton"].spine="3.3.0";
         _spineData["skeleton"].images="";
 
         if(jsonObject.hasOwnProperty("armature")){
@@ -340,9 +340,9 @@ public class ParseJson {
 
                                 if(display.hasOwnProperty("type") && display["type"]!="image"){ //类型
                                     var type:String = "mesh";
-                                    if(display["type"]=="mesh" && display.hasOwnProperty("weights")){
-                                        type="weightedmesh";
-                                    }
+//                                    if(display["type"]=="mesh" && display.hasOwnProperty("weights")){
+//                                        type="weightedmesh";
+//                                    }
                                     spine_attachment["type"]=type;
                                     isImage = false;
                                 }
@@ -494,7 +494,7 @@ public class ParseJson {
                 }
                 if(db_animObj.hasOwnProperty("ffd")){
                     var spine_ffdArr:Object = new Object();
-                    spine_animObj["ffd"] = spine_ffdArr;
+                    spine_animObj["deform"] = spine_ffdArr;
 
                     parseFFDAnims(db_animObj,spine_ffdArr);
                 }
