@@ -391,10 +391,6 @@ public class ParseJson {
                                 }
 
 
-                                var mat:Matrix = new Matrix();
-                                mat.concat(displayAttach.transform.matrix);
-                                mat.concat(displayAttach.parent.transform.matrix);
-
                                 if(display.hasOwnProperty("vertices"))
                                 {
                                     var vertices:Array = display["vertices"] as Array;
@@ -409,7 +405,7 @@ public class ParseJson {
                                         for(var m:uint = 0;m<bonePoseArr.length;m+=7){
                                             var matrix:Matrix=new Matrix(bonePoseArr[m+1],bonePoseArr[m+2],bonePoseArr[m+3],
                                             bonePoseArr[m+4],bonePoseArr[m+5],bonePoseArr[m+6]);
-//                                            matrix.invert();
+                                            matrix.invert();//bonePose的全局Matrix，所以这儿需要转成本地Matrix
                                             bonePoseKV["BoneIndex"+bonePoseArr[m]] = matrix;
                                         }
 
@@ -436,20 +432,22 @@ public class ParseJson {
                                                 var boneIdx:uint = uint(db_weights[k+t+1]);//骨骼索引
                                                 var weight:Number =db_weights[k+t+2]; //权重
 
-                                                var boneDisplay:Sprite=_boneDisplays[boneIdx] as Sprite;
                                                 var boneMatrix:Matrix = bonePoseKV["BoneIndex"+boneIdx] as Matrix;
-
-                                                vertex = boneMatrix.transformPoint(vertex);
+                                                var temp:Point = boneMatrix.transformPoint(vertex);
 
                                                 spine_weight_vertices.push(boneIdx);
-                                                spine_weight_vertices.push(vertex.x);
-                                                spine_weight_vertices.push(-vertex.y);
+                                                spine_weight_vertices.push(temp.x);
+                                                spine_weight_vertices.push(-temp.y);
                                                 spine_weight_vertices.push(weight);
                                             }
                                             k+=boneCount*2;
                                             ++vertexIndex;
                                         }
                                     }else{
+                                        var mat:Matrix = new Matrix();
+                                        mat.concat(displayAttach.transform.matrix);
+                                        mat.concat(displayAttach.parent.transform.matrix);
+
                                         var vertices_len:uint = vertices.length;
                                         var spine_vertices:Array = [];
 
