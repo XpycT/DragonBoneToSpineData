@@ -7,7 +7,11 @@
           <sdk name="Flex4.6.0-AIR19" />
         </dependencies>
         <compiler-options />
-        <packaging-air-desktop use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/Main-app.xml" package-file-name="Main" />
+        <packaging-air-desktop use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/Main-app.xml" package-file-name="DragonBoneToSpine">
+          <files-to-package>
+            <FilePathAndPathInPackage file-path="$MODULE_DIR$/Icon" path-in-package="Icon" />
+          </files-to-package>
+        </packaging-air-desktop>
         <packaging-android />
         <packaging-ios />
       </configuration>

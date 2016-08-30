@@ -18,7 +18,7 @@
     <filename>DragonBoneToSpine</filename>
 
     <!-- The name that is displayed in the AIR application installer. May have multiple values for each language. See samples or xsd schema file. Optional. -->
-    <name>DragonBone To Spine</name>
+    <name>DragonBone To Spine v1.0.0</name>
 
     <!-- A string value of the format <0-999>.<0-999>.<0-999> that represents application version which can be used to check for application upgrade.
          Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
@@ -125,31 +125,31 @@
     <!--<programMenuFolder></programMenuFolder>-->
 
     <!-- The icon the system uses for the application. For at least one resolution, specify the path to a PNG file included in the AIR package. Optional. -->
-    <!--<icon>
-        <image16x16></image16x16>
-        <image29x29></image29x29>
-        <image32x32></image32x32>
-        <image36x36></image36x36>
-        <image40x40></image40x40>
-        <image48x48></image48x48>
-        <image50x50></image50x50>
-        <image57x57></image57x57>
-        <image58x58></image58x58>
-        <image60x60></image60x60>
-        <image72x72></image72x72>
-        <image76x76></image76x76>
-        <image80x80></image80x80>
-        <image96x96></image96x96>
-        <image100x100></image100x100>
-        <image114x114></image114x114>
-        <image120x120></image120x120>
-        <image128x128></image128x128>
-        <image144x144></image144x144>
-        <image152x152></image152x152>
-        <image512x512></image512x512>
-        <image732x412></image732x412>
-        <image1024x1024></image1024x1024>
-    </icon>-->
+    <icon>
+        <!--<image16x16></image16x16>-->
+        <!--<image29x29></image29x29>-->
+        <!--<image32x32></image32x32>-->
+        <!--<image36x36></image36x36>-->
+        <!--<image40x40></image40x40>-->
+        <image48x48>Icon/48.png</image48x48>
+        <image50x50>Icon/50.png</image50x50>
+        <!--<image57x57></image57x57>-->
+        <image58x58>Icon/58.png</image58x58>
+        <!--<image60x60></image60x60>-->
+        <image72x72>Icon/72.png</image72x72>
+        <!--<image76x76></image76x76>-->
+        <!--<image80x80></image80x80>-->
+        <!--<image96x96></image96x96>-->
+        <image100x100>Icon/100.png</image100x100>
+        <image114x114>Icon/114.png</image114x114>
+        <!--<image120x120></image120x120>-->
+        <image128x128>Icon/128.png</image128x128>
+        <image144x144>Icon/144.png</image144x144>
+        <!--<image152x152></image152x152>-->
+        <image512x512>Icon/512.png</image512x512>
+        <!--<image732x412></image732x412>-->
+        <!--<image1024x1024></image1024x1024>-->
+    </icon>
 
     <!-- Whether the application handles the update when a user double-clicks an update version of the AIR file (true),
          or the default AIR application installer handles the update (false). Optional. Default false. -->

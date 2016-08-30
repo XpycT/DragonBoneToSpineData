@@ -1,7 +1,9 @@
 /**
  * Created by zhouzhanglin on 16/8/19.
+ * 下面代码中db缩写表示dragonBone
  */
 package {
+import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 import flash.geom.Matrix;
 import flash.geom.Point;
@@ -141,6 +143,7 @@ public class ParseJson {
                 convertBones();
                 convertSkinsData();
                 convertSlots();
+                convertIKs();
                 convertAnims();
                 if(_spine_eventsList!=null){
                     _spineData["events"] = _spine_eventsList;
@@ -268,6 +271,44 @@ public class ParseJson {
             }
         }
 
+    }
+
+    private function convertIKs():void{
+        if(_armatureObj.hasOwnProperty("ik")){
+            var db_iks:Array = _armatureObj["ik"];
+            var db_iks_len:uint = db_iks.length;
+            if(db_iks_len==0) return;
+
+            var spine_iks:Array = [];
+            for(var i:uint = 0;i<db_iks_len;++i){
+                var db_ik_Obj :Object = db_iks[i];
+                var spine_ik_obj:Object=  new Object();
+                spine_iks.push(spine_ik_obj);
+
+                spine_ik_obj["name"] = db_ik_Obj["name"];//ik约束名称
+                spine_ik_obj["target"] = db_ik_Obj["target"];//ik约束的目标点
+
+                if(db_ik_Obj.hasOwnProperty("bendPositive")) spine_ik_obj["bendPositive"] = db_ik_Obj["bendPositive"];
+                else spine_ik_obj["bendPositive"] = true; //db中默认为true
+
+                if(db_ik_Obj.hasOwnProperty("weight")) spine_ik_obj["mix"] = db_ik_Obj["weight"];
+
+                if(db_ik_Obj.hasOwnProperty("bone")){
+                    var db_bone:String = db_ik_Obj["bone"];
+                    if(db_ik_Obj.hasOwnProperty("chain")){
+                        var spine_bones:Array = [db_bone];
+                        var boneSprite:DisplayObjectContainer = _bonesKV[db_bone]["displayBone"] as DisplayObjectContainer;
+                        var chain:int = int(db_ik_Obj["chain"]);
+                        boneSprite = boneSprite.parent;
+                        while(chain>0){
+                            spine_bones.push(boneSprite.name);
+                            boneSprite = boneSprite.parent;
+                            chain--;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private function convertSlots():void{
