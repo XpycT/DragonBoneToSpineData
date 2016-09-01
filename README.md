@@ -7,5 +7,5 @@
 动画嵌套不支持(因为Spine没功能)，IK动画没做测试<br/>
 当前只在Unity中测试过。
 #说明
-release文件中，“DragonBoneToSpine.app.zip”是mac上的绿色版本 。"DragonBoneToSpine.air"为通用版本，需要安装Flash AIR环境<br/>
+release文件中，“DragonBoneToSpine_mac.app.zip”是mac上的绿色版本 ,  “DragonBoneToSpine_win.zip”是windows上的绿色版本 , "DragonBoneToSpine.air"为通用版本，需要安装Flash AIR环境<br/>
 如果你要使用DragonBone转Unity动画，可以访问此处[DragonBoneToUnity](http://git.oschina.net/bingheliefeng/DragonBone_Unity)
