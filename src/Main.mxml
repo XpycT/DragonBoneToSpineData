@@ -29,7 +29,7 @@
             } else {
                 _file = null;
             }
-            folderPath.setStyle("text-decoration","none");
+            folderPath.setStyle("text-decoration", "none");
         }
 
         private function onClickConvert() {
@@ -39,14 +39,16 @@
 
                     var parseJson:ParseJson = new ParseJson();
 
-                    var textureJson:String = undefined;
+                    var textureJson:Array = [];
+                    var textureFile:Array = [];
                     var animJson:String = undefined;
-                    var textureFile:File = null;
                     var animFile:File = null;
 
                     for (var i:int = 0; i < fileLst.length; ++i) {
                         _file = fileLst[i] as File;
-                        if (_file.extension.toLowerCase() == "json") {
+                        if (_file.isDirectory) {
+                            copyToSpineDirectory();
+                        } else if (_file.extension.toLowerCase() == "json") {
                             try {
                                 var fs:FileStream = new FileStream();
                                 fs.open(_file, FileMode.READ);
@@ -57,90 +59,90 @@
                             } finally {
                                 if (_file.name.indexOf("texture") == 0) {
                                     //材质的json
-                                    textureJson=  content;
-                                    textureFile = _file;
-                                }else{
+                                    textureJson.push(content);
+                                    textureFile.push(_file);
+                                } else {
                                     //动画json
                                     animJson = content;
                                     animFile = _file;
                                 }
                             }
-                        }else if(_file.extension.toLowerCase()=="png"){
+                        } else if (_file.extension.toLowerCase() == "png") {
                             //复制
-                            copyTexuture();
+                            copyToSpineDirectory();
                         }
                     }
-                    if(textureJson){
-                        _file = textureFile ;
-                        parseJson.parseTextureJosn(textureJson);
-                        saveTextureJsonFile(parseJson.textureData,_file.name);
-                    }
-                    if(animJson){
-                        _file = animFile ;
-                        parseJson.parseAnimJson(animJson);
-                        saveAnimJsonFile(parseJson.spineData,parseJson.armatureName+".json");
-                        while(parseJson.hasNextArmature()){
-                            parseJson.nextArmature();
-                            saveAnimJsonFile(parseJson.spineData,parseJson.armatureName+".json");
+                    _file = animFile;
+                    if (_file != null) {
+                        if (textureJson.length > 0) {
+                            parseJson.parseTextureJsons(textureJson);
+                            saveTextureJsonFile(parseJson.textureData, animFile.name);
                         }
+                        if (animJson) {
+                            parseJson.parseAnimJson(animJson);
+                            saveAnimJsonFile(parseJson.spineData, parseJson.armatureName + ".json");
+                            while (parseJson.hasNextArmature()) {
+                                parseJson.nextArmature();
+                                saveAnimJsonFile(parseJson.spineData, parseJson.armatureName + ".json");
+                            }
 
-                        folderPath.setStyle("text-decoration","underline");
-                        folderPath.text = _file.nativePath.substring(0,_file.nativePath.lastIndexOf("/"))+"_spine";
-                        showCompleteTip.play();
+                            folderPath.setStyle("text-decoration", "underline");
+                            folderPath.text = _file.nativePath.substring(0, _file.nativePath.lastIndexOf("/")) + "_spine";
+                            showCompleteTip.play();
+                        }
                     }
                 }
             }
             _file = null;
         }
 
-        private function copyTexuture():void
-        {
-            var path:String = _file.nativePath.substring(0,_file.nativePath.lastIndexOf("/"))+"_spine";
+        private function copyToSpineDirectory():void {
+            var path:String = _file.nativePath.substring(0, _file.nativePath.lastIndexOf("/")) + "_spine";
             var dir:File = new File(path);
-            if(dir.isDirectory){
-                if(!dir.exists) dir.createDirectory();
+            if (dir.isDirectory) {
+                if (!dir.exists) dir.createDirectory();
             }
-            _file.copyTo(new File(dir.nativePath+"/"+_file.name),true);
+            _file.copyTo(new File(dir.nativePath + "/" + _file.name), true);
         }
 
-        private function saveAnimJsonFile(jsonObj:Object,name:String):void{
-            var path:String = _file.nativePath.substring(0,_file.nativePath.lastIndexOf("/"))+"_spine";
+        private function saveAnimJsonFile(jsonObj:Object, name:String):void {
+            var path:String = _file.nativePath.substring(0, _file.nativePath.lastIndexOf("/")) + "_spine";
             var dir:File = new File(path);
-            if(dir.isDirectory){
-                if(!dir.exists) dir.createDirectory();
+            if (dir.isDirectory) {
+                if (!dir.exists) dir.createDirectory();
             }
-            var file:File = new File(dir.nativePath+"/"+name);
+            var file:File = new File(dir.nativePath + "/" + name);
 
-            try{
+            try {
                 var json:String = JSON.stringify(jsonObj);
                 var fs:FileStream = new FileStream();
-                fs.open(file,FileMode.WRITE);
-                fs.writeMultiByte(json,"utf-8");
+                fs.open(file, FileMode.WRITE);
+                fs.writeMultiByte(json, "utf-8");
                 fs.close();
-            }catch(e:Error){
+            } catch (e:Error) {
                 Alert.show("Covert json fail!");
             }
         }
 
-        private function saveTextureJsonFile(data:String,name:String):void{
+        private function saveTextureJsonFile(data:String, name:String):void {
 
-            var path:String = _file.nativePath.substring(0,_file.nativePath.lastIndexOf("/"))+"_spine";
+            var path:String = _file.nativePath.substring(0, _file.nativePath.lastIndexOf("/")) + "_spine";
             var dir:File = new File(path);
-            if(dir.isDirectory){
-                if(!dir.exists) dir.createDirectory();
+            if (dir.isDirectory) {
+                if (!dir.exists) dir.createDirectory();
             }
-            var file:File = new File(dir.nativePath+"/"+name.substring(0,name.lastIndexOf(".json"))+".atlas.txt");
+            var file:File = new File(dir.nativePath + "/" + name.substring(0, name.lastIndexOf(".json")) + ".atlas.txt");
 
             var fs:FileStream = new FileStream();
-            fs.open(file,FileMode.WRITE);
-            fs.writeMultiByte(data,"utf-8");
+            fs.open(file, FileMode.WRITE);
+            fs.writeMultiByte(data, "utf-8");
             fs.close();
         }
 
-        private function onCickLabel():void{
-            if(folderPath.text.length>0 && folderPath.getStyle("text-decoration")=="underline"){
+        private function onCickLabel():void {
+            if (folderPath.text.length > 0 && folderPath.getStyle("text-decoration") == "underline") {
                 var file:File = new File(folderPath.text);
-                if(file.exists&&file.isDirectory){
+                if (file.exists && file.isDirectory) {
                     file.openWithDefaultApplication();
                 }
             }

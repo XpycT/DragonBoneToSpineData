@@ -48,40 +48,45 @@ public class ParseJson {
      * 解析材质json
      * @param json
      */
-    public function parseTextureJosn(json:String):void
+    public function parseTextureJsons(jsons:Array):void
     {
         _textureKV = new Dictionary();
-        var jsonObject:Object = JSON.parse(json);
         var n:String= "\n";
         var tab:String="  ";
-        _textureData = n;
-        _textureData = _textureData.concat(jsonObject["imagePath"]+n);
-        _textureData = _textureData.concat("size: 0,0"+n);
-        _textureData = _textureData.concat("format: RGBA8888"+n);
-        _textureData = _textureData.concat("filter: Linear,Linear"+n);
-        _textureData = _textureData.concat("repeat: none"+n);
-        var subTexture:Array = jsonObject["SubTexture"] as Array;
-        var len :uint=subTexture.length;
-        for(var i:uint=0;i<len;++i){
-            var textureObj:Object = subTexture[i];
-            _textureKV[textureObj["name"]] = textureObj;
+        _textureData = "";
 
-            _textureData = _textureData.concat(textureObj["name"]+n);
-            _textureData = _textureData.concat(tab+"rotate: false"+n);
-            _textureData = _textureData.concat(tab+"xy: "+textureObj["x"]+" ,"+textureObj["y"]+n);
-            _textureData = _textureData.concat(tab+"size: "+textureObj["width"]+" ,"+textureObj["height"]+n);
+        for(var i:uint = 0;i<jsons.length;++i){
+            var json:String = jsons[i];
+            var jsonObject:Object = JSON.parse(json);
+            _textureData = _textureData.concat(n);
+            _textureData = _textureData.concat(jsonObject["imagePath"]+n);
+            _textureData = _textureData.concat("size: 0,0"+n);
+            _textureData = _textureData.concat("format: RGBA8888"+n);
+            _textureData = _textureData.concat("filter: Linear,Linear"+n);
+            _textureData = _textureData.concat("repeat: none"+n);
+            var subTexture:Array = jsonObject["SubTexture"] as Array;
+            var len :uint=subTexture.length;
+            for(var j:uint=0;j<len;++j){
+                var textureObj:Object = subTexture[j];
+                _textureKV[textureObj["name"]] = textureObj;
 
-            if(textureObj.hasOwnProperty("frameWidth"))
-                _textureData = _textureData.concat(tab+"orig: "+textureObj["frameWidth"]+" ,"+textureObj["frameHeight"]+n);
-            else
-                _textureData = _textureData.concat(tab+"orig: "+textureObj["width"]+" ,"+textureObj["height"]+n);
+                _textureData = _textureData.concat(textureObj["name"]+n);
+                _textureData = _textureData.concat(tab+"rotate: false"+n);
+                _textureData = _textureData.concat(tab+"xy: "+textureObj["x"]+" ,"+textureObj["y"]+n);
+                _textureData = _textureData.concat(tab+"size: "+textureObj["width"]+" ,"+textureObj["height"]+n);
 
-            if(textureObj.hasOwnProperty("frameX"))
-                _textureData = _textureData.concat(tab+"offset: "+textureObj["frameX"]+" ,"+textureObj["frameY"]+n);
-            else
-                _textureData = _textureData.concat(tab+"offset: 0,0"+n);
+                if(textureObj.hasOwnProperty("frameWidth"))
+                    _textureData = _textureData.concat(tab+"orig: "+textureObj["frameWidth"]+" ,"+textureObj["frameHeight"]+n);
+                else
+                    _textureData = _textureData.concat(tab+"orig: "+textureObj["width"]+" ,"+textureObj["height"]+n);
 
-            _textureData = _textureData.concat(tab+"index: -1"+n);
+                if(textureObj.hasOwnProperty("frameX"))
+                    _textureData = _textureData.concat(tab+"offset: "+textureObj["frameX"]+" ,"+textureObj["frameY"]+n);
+                else
+                    _textureData = _textureData.concat(tab+"offset: 0,0"+n);
+
+                _textureData = _textureData.concat(tab+"index: -1"+n);
+            }
         }
     }
 
