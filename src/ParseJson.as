@@ -54,7 +54,7 @@ public class ParseJson {
         var jsonObject:Object = JSON.parse(json);
         var n:String= "\n";
         var tab:String="  ";
-        _textureData = "";
+        _textureData = n;
         _textureData = _textureData.concat(jsonObject["imagePath"]+n);
         _textureData = _textureData.concat("size: 0,0"+n);
         _textureData = _textureData.concat("format: RGBA8888"+n);
@@ -460,6 +460,13 @@ public class ParseJson {
                                 if(display.hasOwnProperty("uvs")) spine_attachment["uvs"] = display["uvs"];
                                 if(display.hasOwnProperty("triangles")) {
                                     var triangles:Array = display["triangles"] as Array;
+                                    //三角形顺序相反
+                                    for(var t:uint =0;t<triangles.Length;t+=3){
+                                        var f1 = triangles[t];
+                                        var f3 = triangles[t+2];
+                                        triangles[t] = f3;
+                                        triangles[t+2] = f1;
+                                    }
                                     spine_attachment["triangles"] = triangles;
                                     spine_attachment["hull"] = triangles.length/3;
                                 }
