@@ -461,7 +461,13 @@ public class ParseJson {
                                 displayAttach.name = attachment;
                                 slotDisplay.addChild(displayAttach);
 
-                                if(display.hasOwnProperty("edges")) spine_attachment["edges"] = display["edges"];
+                                if(display.hasOwnProperty("edges")) {
+                                    spine_attachment["edges"] = display["edges"];
+                                    var edges_len:uint = spine_attachment["edges"].length;
+                                    for(var t:uint=0; t< edges_len;++t){
+                                        spine_attachment["edges"][t]*=2;
+                                    }
+                                }
                                 if(display.hasOwnProperty("uvs")) spine_attachment["uvs"] = display["uvs"];
                                 if(display.hasOwnProperty("triangles")) {
                                     var triangles:Array = display["triangles"] as Array;

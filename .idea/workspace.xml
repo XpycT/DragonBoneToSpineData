@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AirPackageProjectParameters">
-    <option name="desktopPackageType" value="captive runtime bundle (*.app)" />
-  </component>
   <component name="ChangeListManager">
     <list default="true" id="dd3ce445-0e88-46ff-b890-767fffde6153" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/release/v1.0.0/DragonBoneToSpine.air" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/release/v1.0.0/DragonBoneToSpine_mac.app.zip" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/release/v1.0.0/DragonBoneToSpine_win.zip" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Main-app.xml" afterPath="$PROJECT_DIR$/Main-app.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Main.mxml" afterPath="$PROJECT_DIR$/src/Main.mxml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ParseJson.as" afterPath="$PROJECT_DIR$/src/ParseJson.as" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DragonBoneToSpineData.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -34,27 +25,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ParseJson.as" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ParseJson.as" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ParseJson.as">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-14.481482">
-              <caret line="50" column="37" selection-start-line="50" selection-start-column="20" selection-end-line="50" selection-end-column="37" />
+            <state vertical-scroll-proportion="0.18831168">
+              <caret line="461" column="68" selection-start-line="461" selection-start-column="68" selection-end-line="461" selection-end-column="68" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="e#82#126#0" expanded="true" />
-                <element signature="e#4109#4280#0" expanded="false" />
                 <element signature="e#8828#11037#0" expanded="false" />
-                <element signature="e#26135#27803#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Main.mxml" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Main.mxml" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Main.mxml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.21694915">
-              <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+            <state vertical-scroll-proportion="-51.0">
+              <caret line="161" column="30" selection-start-line="161" selection-start-column="28" selection-end-line="161" selection-end-column="30" />
               <folding>
                 <marker date="1473463876000" expanded="false" signature="358:403" placeholder="..." />
                 <marker date="1473463876000" expanded="true" signature="503:641" placeholder="{...}" />
@@ -143,9 +132,9 @@
         <option value="$PROJECT_DIR$/src/utils/IntUtil.as" />
         <option value="$PROJECT_DIR$/src/utils/MD5.as" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/src/ParseJson.as" />
         <option value="$PROJECT_DIR$/Main-app.xml" />
         <option value="$PROJECT_DIR$/src/Main.mxml" />
+        <option value="$PROJECT_DIR$/src/ParseJson.as" />
       </list>
     </option>
   </component>
@@ -192,9 +181,9 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="PackagesPane" />
       <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -586,11 +575,12 @@
       <workItem from="1473261906944" duration="224000" />
       <workItem from="1473433604068" duration="430000" />
       <workItem from="1473462741743" duration="1381000" />
+      <workItem from="1473524250175" duration="798000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="114674000" />
+    <option name="totallyTimeSpent" value="115472000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="40" y="23" width="1237" height="763" extended-state="0" />
@@ -607,14 +597,14 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32935917" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19821163" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19672132" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18075314" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22950819" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22950819" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="LuaJ" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="7" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -657,9 +647,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -671,9 +659,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -685,9 +671,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -696,7 +680,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -707,9 +690,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -718,7 +699,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -729,9 +709,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -743,9 +721,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -764,9 +740,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -785,9 +759,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -799,9 +771,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -813,9 +783,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -827,9 +795,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -841,9 +807,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -855,9 +819,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -869,9 +831,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -883,9 +843,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -897,9 +855,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -911,9 +867,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -932,9 +886,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -953,9 +905,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -974,9 +924,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -995,9 +943,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1016,9 +962,7 @@
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
             <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1093,32 +1037,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ParseJson.as">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-14.481482">
-          <caret line="50" column="37" selection-start-line="50" selection-start-column="20" selection-end-line="50" selection-end-column="37" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="e#82#126#0" expanded="true" />
-            <element signature="e#4109#4280#0" expanded="false" />
-            <element signature="e#8828#11037#0" expanded="false" />
-            <element signature="e#26135#27803#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Main-app.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.31288344">
           <caret line="20" column="36" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="36" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.mxml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.21694915">
-          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+        <state vertical-scroll-proportion="-51.0">
+          <caret line="161" column="30" selection-start-line="161" selection-start-column="28" selection-end-line="161" selection-end-column="30" />
           <folding>
             <marker date="1473463876000" expanded="false" signature="358:403" placeholder="..." />
             <marker date="1473463876000" expanded="true" signature="503:641" placeholder="{...}" />
@@ -1158,6 +1087,18 @@
             <marker date="1473463876000" expanded="true" signature="6257:6572" placeholder="{...}" />
             <marker date="1473463876000" expanded="true" signature="6360:6562" placeholder="{...}" />
             <marker date="1473463876000" expanded="true" signature="6474:6548" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/ParseJson.as">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.18831168">
+          <caret line="461" column="68" selection-start-line="461" selection-start-column="68" selection-end-line="461" selection-end-column="68" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="e#82#126#0" expanded="true" />
+            <element signature="e#8828#11037#0" expanded="false" />
           </folding>
         </state>
       </provider>
