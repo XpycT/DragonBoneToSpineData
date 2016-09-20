@@ -87,7 +87,7 @@
                             }
 
                             folderPath.setStyle("text-decoration", "underline");
-                            folderPath.text = _file.nativePath.substring(0, _file.nativePath.lastIndexOf("/")) + "_spine";
+                            folderPath.text = _file.parent.nativePath + "_spine";
                             showCompleteTip.play();
                         }
                     }
@@ -97,7 +97,7 @@
         }
 
         private function copyToSpineDirectory():void {
-            var path:String = _file.nativePath.substring(0, _file.nativePath.lastIndexOf("/")) + "_spine";
+            var path:String = _file.parent.nativePath+ "_spine";
             var dir:File = new File(path);
             if (dir.isDirectory) {
                 if (!dir.exists) dir.createDirectory();
@@ -106,7 +106,7 @@
         }
 
         private function saveAnimJsonFile(jsonObj:Object, name:String):void {
-            var path:String = _file.nativePath.substring(0, _file.nativePath.lastIndexOf("/")) + "_spine";
+            var path:String = _file.parent.nativePath + "_spine";
             var dir:File = new File(path);
             if (dir.isDirectory) {
                 if (!dir.exists) dir.createDirectory();
@@ -126,7 +126,7 @@
 
         private function saveTextureJsonFile(data:String, name:String):void {
 
-            var path:String = _file.nativePath.substring(0, _file.nativePath.lastIndexOf("/")) + "_spine";
+            var path:String = _file.parent.nativePath + "_spine";
             var dir:File = new File(path);
             if (dir.isDirectory) {
                 if (!dir.exists) dir.createDirectory();

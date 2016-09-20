@@ -10,5 +10,5 @@
 release文件中，“DragonBoneToSpine_mac.app.zip”是mac上的绿色版本 ,  “DragonBoneToSpine_win.zip”是windows上的绿色版本 , "DragonBoneToSpine.air"为通用版本，需要安装Flash AIR环境<br/>
 如果你要使用DragonBone转Unity动画，可以访问此处[DragonBoneToUnity](http://git.oschina.net/bingheliefeng/DragonBone_Unity)
 
-#Change list v1.0.1
-支持dragonBone生成多张贴图或者为散图
+#Change list v1.0.2
+fixbug: 在windows上不能转换问题
