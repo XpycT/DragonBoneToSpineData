@@ -597,6 +597,9 @@ public class ParseJson {
                         spine_animObj["events"] = spine_frame_events;
                     }
                 }
+                if(db_animObj.hasOwnProperty("zOrder")){
+                    
+                }
             }
         }
     }

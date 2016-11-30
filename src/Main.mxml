@@ -57,7 +57,7 @@
                             } catch (e:*) {
                                 Alert.show(e.toString(), "Error");
                             } finally {
-                                if (_file.name.indexOf("texture") == 0) {
+                                if ( _file.name.lastIndexOf("_tex.json")>0 || _file.name.indexOf("texture") == 0) {
                                     //材质的json
                                     textureJson.push(content);
                                     textureFile.push(_file);
