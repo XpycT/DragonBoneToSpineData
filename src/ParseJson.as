@@ -29,6 +29,7 @@ public class ParseJson {
     private var _slotsKV:Dictionary = null; //key为slot name ,value为dragonBone数据
     private var _displayModel:Sprite = null ;//用于模拟树状
     private var _boneDisplays:Array = null;
+    private var _slotsNames:Array= null;
     private var _jsonObject:Object = null;
 
     public function get spineData():Object{
@@ -196,6 +197,8 @@ public class ParseJson {
         if(_armatureObj.hasOwnProperty("slot")){
             var db_slots:Array = _armatureObj["slot"] as Array;
             var db_slots_len:uint = db_slots.length;
+
+            _slotsNames = [];
             for(var i:int = 0;i<db_slots_len;++i){
 
                 var db_slot:Object = db_slots[i];
@@ -203,6 +206,7 @@ public class ParseJson {
                 //slot name
                 var slotName:String = db_slot["name"].toString();
                 _slotsKV[slotName] = db_slot;
+                _slotsNames.push(slotName);
 
                 if(db_slot.hasOwnProperty("parent")){ //parent bone name
                      var displaySlot:Sprite = new Sprite();
@@ -598,8 +602,39 @@ public class ParseJson {
                     }
                 }
                 if(db_animObj.hasOwnProperty("zOrder")){
-                    
+                    var spine_zorders:Array = [];
+                    spine_animObj["draworder"] = spine_zorders;
+                    parseZOrderAnims(db_animObj["zOrder"],spine_zorders);
                 }
+            }
+        }
+    }
+
+    private function parseZOrderAnims(db_animObj:Object,spine_zorders:Array) {
+        if (db_animObj.hasOwnProperty("frame")) {
+            var db_frames:Array = db_animObj["frame"] as Array;
+            var db_frames_len:uint = db_frames.length;
+            var during:Number = 0;
+            for (var i:uint = 0; i < db_frames_len; ++i) {
+                var db_orderObj:Object = db_frames[i];
+                if (db_orderObj.hasOwnProperty("zOrder")) {
+                    var spine_zOrderObj:Object = new Object();
+                    var zorders:Array = db_orderObj["zOrder"] as Array;
+                    var db_zorders_len:uint = zorders.length;
+                    spine_zOrderObj["time"] = during;
+                    spine_zOrderObj["offsets"] = [];
+                    for (var j:uint = 0; j < db_zorders_len; j += 2) {
+                        var slotIdx:int = int(zorders[j]);
+                        var offset:int = int(zorders[j + 1]);
+                        var offsetObj:Object = new Object();
+                        offsetObj["slot"] = _slotsNames[slotIdx];
+                        offsetObj["offset"] = offset;
+                        spine_zOrderObj["offsets"].push(offsetObj);
+                    }
+                    spine_zorders.push(spine_zOrderObj);
+                }
+                var frame_dur:int = db_orderObj.hasOwnProperty("duration") ? int(db_orderObj["duration"]) : 1;
+                during += _perKeyTime * frame_dur;
             }
         }
     }
