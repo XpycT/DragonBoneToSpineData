@@ -742,7 +742,16 @@ public class ParseJson {
                                 if(frame.hasOwnProperty("offset")){
                                     offset = spine_frame["offset"] = int(frame["offset"]);
                                 }
-
+                                if(offset%2!=0){//奇数offset
+                                    offset--;
+                                    spine_frame["offset"] = offset;
+                                    vertices.unshift(0);
+                                    ++vertices_len;
+                                }
+                                if(vertices_len%2!=0){
+                                    ++vertices_len;
+                                    vertices.push(0);
+                                }
                                 var spine_vertices:Array = [];
                                 for(var k:uint = 0;k<vertices_len;k+=2){
                                     //pose中的顶点位置
