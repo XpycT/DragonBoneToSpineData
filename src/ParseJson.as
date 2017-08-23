@@ -752,6 +752,24 @@ public class ParseJson {
                                     ++vertices_len;
                                     vertices.push(0);
                                 }
+
+                                //重新计算offset
+                                if(offset>0 && db_display_data.hasOwnProperty("weights")){
+                                    var _offset:int = offset;
+                                    var db_weights:Array=db_display_data["weights"] as Array;//db权重
+                                    var db_weights_len:uint=db_weights.length;
+                                    for(var k:uint = 0 ;k<db_weights_len;++k){
+                                        var boneCount:uint = uint(db_weights[k]);//骨骼数量
+                                        k+=boneCount*2;
+                                        _offset--;
+                                        if(_offset==0){
+                                            _offset = k+1;
+                                            break;
+                                        }
+                                    }
+                                    spine_frame["offset"] = _offset;
+                                }
+
                                 var spine_vertices:Array = [];
                                 for(var k:uint = 0;k<vertices_len;k+=2){
                                     //pose中的顶点位置
