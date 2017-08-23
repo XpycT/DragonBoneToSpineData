@@ -715,6 +715,13 @@ public class ParseJson {
                     var db_display_data:Object = _slotsKV[db_slot_name][db_display_name];//原始skin数据
                     var poseVertices:Array = db_display_data["vertices"] as Array;//原始顶点
 
+                    var haveWeight:Boolean = false;//是否有权重数据
+                    if(db_display_data.hasOwnProperty("weights")
+                            && db_display_data["weights"]!=null
+                            && db_display_data["weights"].length>0){
+                        haveWeight = true;
+                    }
+
                     var frames_len:uint = frames.length;
                     var during:Number = 0;
                     for(var j:uint = 0 ;j<frames_len ; ++j){
@@ -777,13 +784,20 @@ public class ParseJson {
                                     //现在的位置
                                     var currentPoint:Point = new Point(orginPoint.x+vertices[k],orginPoint.y+vertices[k+1]);
                                     //转换
-                                    orginPoint = mat.transformPoint(orginPoint);
-                                    currentPoint = mat.transformPoint(currentPoint);
+                                    if(haveWeight){
+                                        orginPoint = displayAttach.localToGlobal(orginPoint);
+                                        currentPoint = displayAttach.localToGlobal(currentPoint);
+                                    }else{
+                                        orginPoint = mat.transformPoint(orginPoint);
+                                        currentPoint = mat.transformPoint(currentPoint);
+                                    }
                                     //重新设置位移
                                     spine_vertices.push(currentPoint.x-orginPoint.x);
                                     spine_vertices.push(orginPoint.y-currentPoint.y);
                                 }
-                                calculateWeight(db_display_data,spine_vertices,offset);
+                                if(haveWeight){
+                                    calculateDeformAnimWeight(db_display_data,spine_vertices,offset);
+                                }
                                 spine_frame["vertices"]=spine_vertices;
                             }
                         }
@@ -796,47 +810,46 @@ public class ParseJson {
         }
     }
 
-    private function calculateWeight(display:Object,vertices:Array,offset:int = 0):void{
+    //计算动画中的位移
+    private function calculateDeformAnimWeight(display:Object,vertices:Array,offset:int = 0):void{
 
-        if(display.hasOwnProperty("weights")){
-            //spine weight vertices格式:bonecount,boneindex,vx,vy,weight
-            var bonePoseArr:Array = display["bonePose"] as Array;
-            var bonePoseKV:Dictionary = new Dictionary();
-            for(var m:uint = 0;m<bonePoseArr.length;m+=7){
-                var matrix:Matrix=new Matrix(bonePoseArr[m+1],bonePoseArr[m+2],bonePoseArr[m+3],
-                        bonePoseArr[m+4],bonePoseArr[m+5],bonePoseArr[m+6]);
-                bonePoseKV["BoneIndex"+bonePoseArr[m]] = matrix;
-            }
+        //spine weight vertices格式:bonecount,boneindex,vx,vy,weight
+        var bonePoseArr:Array = display["bonePose"] as Array;
+        var bonePoseKV:Dictionary = new Dictionary();
+        for(var m:uint = 0;m<bonePoseArr.length;m+=7){
+            var matrix:Matrix=new Matrix(bonePoseArr[m+1],bonePoseArr[m+2],bonePoseArr[m+3],
+                    bonePoseArr[m+4],bonePoseArr[m+5],bonePoseArr[m+6]);
+            bonePoseKV["BoneIndex"+bonePoseArr[m]] = matrix;
+        }
 
-            var skinVertices:Array = display["vertices"];
-            var db_weights:Array=display["weights"] as Array;//db权重
-            var db_weights_len:uint=db_weights.length;
-            var vertexIndex:uint = 0;
-            var i:int = 0;
-            for(var k:uint = 0 ;k<db_weights_len ;++k){
-                var boneCount:uint = uint(db_weights[k]);//骨骼数量
-                if(offset<=0){
-                    var vertex:Point = new Point(vertices[vertexIndex*2],vertices[vertexIndex*2+1]);
-                    var result:Point = new Point();
-                    for(var t:uint=0;t<boneCount*2;t+=2){
-                        var boneIdx:uint = uint(db_weights[k+t+1]);//骨骼索引
-                        var weight:Number =db_weights[k+t+2]; //权重
+        var skinVertices:Array = display["vertices"];
+        var db_weights:Array=display["weights"] as Array;//db权重
+        var db_weights_len:uint=db_weights.length;
+        var vertexIndex:uint = 0;
+        var i:int = 0;
+        for(var k:uint = 0 ;k<db_weights_len ;++k){
+            var boneCount:uint = uint(db_weights[k]);//骨骼数量
+            if(offset<=0){
+                var vertex:Point = new Point(vertices[vertexIndex*2],vertices[vertexIndex*2+1]);
+                var result:Point = new Point();
+                for(var t:uint=0;t<boneCount*2;t+=2){
+                    var boneIdx:uint = uint(db_weights[k+t+1]);//骨骼索引
+                    var weight:Number =db_weights[k+t+2]; //权重
 
-                        var boneMatrix:Matrix = bonePoseKV["BoneIndex"+boneIdx] as Matrix;
-                        boneMatrix.tx =0 ;
-                        boneMatrix.ty =0 ;
-                        var temp:Point = boneMatrix.transformPoint(vertex);
-                        if(skinVertices[i]!=0) result.x += temp.x*weight;
-                        if(skinVertices[i+1]!=0) result.y += temp.y*weight;
-                    }
-                    vertices[vertexIndex*2] = result.x;
-                    vertices[vertexIndex*2+1] = result.y;
-                    ++vertexIndex;
+                    var boneMatrix:Matrix = bonePoseKV["BoneIndex"+boneIdx] as Matrix;
+                    boneMatrix.tx =0 ;
+                    boneMatrix.ty =0 ;
+                    var temp:Point = boneMatrix.transformPoint(vertex);
+                    if(skinVertices[i]!=0) result.x += temp.x*weight;
+                    if(skinVertices[i+1]!=0) result.y += temp.y*weight;
                 }
-                offset--;
-                k+=boneCount*2;
-                ++i;
+                vertices[vertexIndex*2] = result.x;
+                vertices[vertexIndex*2+1] = result.y;
+                ++vertexIndex;
             }
+            offset--;
+            k+=boneCount*2;
+            ++i;
         }
     }
 
