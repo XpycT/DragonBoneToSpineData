@@ -846,6 +846,9 @@ public class ParseJson {
                 vertices[vertexIndex*2] = result.x;
                 vertices[vertexIndex*2+1] = result.y;
                 ++vertexIndex;
+                if(vertexIndex*2+1>=vertices.length){
+                    break;
+                }
             }
             offset--;
             k+=boneCount*2;
