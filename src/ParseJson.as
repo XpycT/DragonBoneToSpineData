@@ -762,19 +762,15 @@ public class ParseJson {
 
                                 //重新计算offset
                                 if(offset>0 && db_display_data.hasOwnProperty("weights")){
-                                    var _offset:int = offset;
                                     var db_weights:Array=db_display_data["weights"] as Array;//db权重
                                     var db_weights_len:uint=db_weights.length;
+                                    var totalVertex:int = 0;
                                     for(var k:uint = 0 ;k<db_weights_len;++k){
                                         var boneCount:uint = uint(db_weights[k]);//骨骼数量
                                         k+=boneCount*2;
-                                        _offset--;
-                                        if(_offset==0){
-                                            _offset = k+1;
-                                            break;
-                                        }
+                                        totalVertex += boneCount*2;
                                     }
-                                    spine_frame["offset"] = _offset;
+                                    spine_frame["offset"] = totalVertex-(db_display_data["uvs"].length-offset);
                                 }
 
                                 var spine_vertices:Array = [];
@@ -822,7 +818,6 @@ public class ParseJson {
             bonePoseKV["BoneIndex"+bonePoseArr[m]] = matrix;
         }
 
-        var skinVertices:Array = display["vertices"];
         var db_weights:Array=display["weights"] as Array;//db权重
         var db_weights_len:uint=db_weights.length;
         var vertexIndex:uint = 0;
@@ -840,8 +835,8 @@ public class ParseJson {
                     boneMatrix.tx =0 ;
                     boneMatrix.ty =0 ;
                     var temp:Point = boneMatrix.transformPoint(vertex);
-                    if(skinVertices[i]!=0) result.x += temp.x*weight;
-                    if(skinVertices[i+1]!=0) result.y += temp.y*weight;
+                    result.x += temp.x*weight;
+                    result.y += temp.y*weight;
                 }
                 vertices[vertexIndex*2] = result.x;
                 vertices[vertexIndex*2+1] = result.y;
