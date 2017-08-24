@@ -776,20 +776,20 @@ public class ParseJson {
                                 var spine_vertices:Array = [];
                                 for(var k:uint = 0;k<vertices_len;k+=2){
                                     //pose中的顶点位置
-                                    var orginPoint:Point = new Point(poseVertices[offset+k],poseVertices[offset+k+1]);
+                                    var originPoint:Point = new Point(poseVertices[offset+k],poseVertices[offset+k+1]);
                                     //现在的位置
-                                    var currentPoint:Point = new Point(orginPoint.x+vertices[k],orginPoint.y+vertices[k+1]);
+                                    var currentPoint:Point = new Point(originPoint.x+vertices[k],originPoint.y+vertices[k+1]);
                                     //转换
                                     if(haveWeight){
-                                        orginPoint = displayAttach.localToGlobal(orginPoint);
+                                        originPoint = displayAttach.localToGlobal(originPoint);
                                         currentPoint = displayAttach.localToGlobal(currentPoint);
                                     }else{
-                                        orginPoint = mat.transformPoint(orginPoint);
+                                        originPoint = mat.transformPoint(originPoint);
                                         currentPoint = mat.transformPoint(currentPoint);
                                     }
                                     //重新设置位移
-                                    spine_vertices.push(currentPoint.x-orginPoint.x);
-                                    spine_vertices.push(orginPoint.y-currentPoint.y);
+                                    spine_vertices.push(currentPoint.x-originPoint.x);
+                                    spine_vertices.push(originPoint.y-currentPoint.y);
                                 }
                                 if(haveWeight){
                                     calculateDeformAnimWeight(db_display_data,spine_vertices,offset);
@@ -821,7 +821,6 @@ public class ParseJson {
         var db_weights:Array=display["weights"] as Array;//db权重
         var db_weights_len:uint=db_weights.length;
         var vertexIndex:uint = 0;
-        var i:int = 0;
         for(var k:uint = 0 ;k<db_weights_len ;++k){
             var boneCount:uint = uint(db_weights[k]);//骨骼数量
             if(offset<=0){
@@ -845,9 +844,8 @@ public class ParseJson {
                     break;
                 }
             }
-            offset--;
+            offset-=2;
             k+=boneCount*2;
-            ++i;
         }
     }
 
