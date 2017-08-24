@@ -844,7 +844,7 @@ public class ParseJson {
                     break;
                 }
             }
-            offset-=2;
+            offset-=boneCount*2;
             k+=boneCount*2;
         }
     }
