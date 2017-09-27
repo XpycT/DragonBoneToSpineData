@@ -9,11 +9,15 @@
 
 #注意事项
 动画嵌套不支持(因为Spine没此功能)，IK动画没做测试<br/>
+一张图片上如果有蒙皮动画，又有ffd动画，转换后可能会有问题<br/>
 当前只在Unity中测试过转换后的文件。
 
 #说明
 release文件中，“DragonBoneToSpine_mac.app.zip”是mac上的绿色版本 ,  “DragonBoneToSpine_win.zip”是windows上的绿色版本 , "DragonBoneToSpine.air"为通用版本，需要安装Flash AIR环境<br/>
 如果你要使用DragonBone转Unity动画，可以访问此处[DragonBoneToUnity](http://git.oschina.net/bingheliefeng/DragonBone_Unity)
+
+#change list v1.0.6
+支持Dragonbones 5.5数据
 
 #change list v1.0.5
 fix: 当蒙皮动画和变形动画同时使用时，转换出错
