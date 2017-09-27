@@ -16,6 +16,13 @@ public class ParseJson {
 
     }
 
+    static const Frame_Type_Frame:uint = 0;
+    static const Frame_Type_DisplayFrame:uint = 1;
+    static const Frame_Type_ColorFrame:uint = 2;
+    static const Frame_Type_TranslateFrame:uint = 3;
+    static const Frame_Type_ScaleFrame:uint = 4;
+    static const Frame_Type_RotateFrame:uint = 5;
+
     private var _armatureName:String;//骨架名称
     private var _textureData:String;//spine的材质数据
     private var _spineData:Object;//spine数据对象，最终会将这个对象生成json
@@ -130,7 +137,7 @@ public class ParseJson {
                 _spineData = new Object();
                 _spineData["skeleton"] = new Object();
                 _spineData["skeleton"].hash = _md5;
-                _spineData["skeleton"].spine="3.3.0";
+                _spineData["skeleton"].spine="3.5.0";
                 _spineData["skeleton"].images="";
 
                 _spine_eventsList = null;
@@ -573,6 +580,8 @@ public class ParseJson {
             for(var i:uint = 0 ;i<db_anims_len;++i){
                 var db_animObj:Object = db_animsArr[i];
 
+                var totalFrame:int = db_animObj["duration"] as int;
+
                 var spine_animObj:Object = new Object();
                 spine_Anims[db_animObj["name"]] = spine_animObj;
 
@@ -580,23 +589,23 @@ public class ParseJson {
                     var spine_bonesArr:Object = new Object();
                     spine_animObj["bones"] = spine_bonesArr;
 
-                    parseBoneAnims(db_animObj,spine_bonesArr);
+                    parseBoneAnims(db_animObj,spine_bonesArr,totalFrame);
                 }
                 if(db_animObj.hasOwnProperty("slot")){
                     var spine_slotArr:Object = new Object();
                     spine_animObj["slots"] = spine_slotArr;
 
-                    parseSlotAnims(db_animObj,spine_slotArr);
+                    parseSlotAnims(db_animObj,spine_slotArr,totalFrame);
                 }
                 if(db_animObj.hasOwnProperty("ffd")){
                     var spine_ffdArr:Object = new Object();
                     spine_animObj["deform"] = spine_ffdArr;
 
-                    parseFFDAnims(db_animObj,spine_ffdArr);
+                    parseFFDAnims(db_animObj,spine_ffdArr,totalFrame);
                 }
                 if(db_animObj.hasOwnProperty("frame")){ //帧事件
                     var spine_frame_events:Array = [];
-                    parseFrameEvents(db_animObj,spine_frame_events);
+                    parseFrameEvents(db_animObj,spine_frame_events,totalFrame);
                     if(spine_frame_events.length>0){
                         spine_animObj["events"] = spine_frame_events;
                     }
@@ -604,13 +613,13 @@ public class ParseJson {
                 if(db_animObj.hasOwnProperty("zOrder")){
                     var spine_zorders:Array = [];
                     spine_animObj["draworder"] = spine_zorders;
-                    parseZOrderAnims(db_animObj["zOrder"],spine_zorders);
+                    parseZOrderAnims(db_animObj["zOrder"],spine_zorders,totalFrame);
                 }
             }
         }
     }
 
-    private function parseZOrderAnims(db_animObj:Object,spine_zorders:Array) {
+    private function parseZOrderAnims(db_animObj:Object,spine_zorders:Array, totalFrame:int) {
         if (db_animObj.hasOwnProperty("frame")) {
             var db_frames:Array = db_animObj["frame"] as Array;
             var db_frames_len:uint = db_frames.length;
@@ -634,12 +643,16 @@ public class ParseJson {
                     spine_zorders.push(spine_zOrderObj);
                 }
                 var frame_dur:int = db_orderObj.hasOwnProperty("duration") ? int(db_orderObj["duration"]) : 1;
-                during += _perKeyTime * frame_dur;
+                if(frame_dur==0){
+                    during = _perKeyTime*totalFrame;  //最后一帧
+                }else{
+                    during += _perKeyTime * frame_dur;
+                }
             }
         }
     }
 
-    private function parseFrameEvents(db_animObj:Object,spine_frame_events:Array):void{
+    private function parseFrameEvents(db_animObj:Object,spine_frame_events:Array,totalFrame:int):void{
         var db_events:Array = db_animObj["frame"] as Array;
         var db_events_len :int = db_events.length;
 
@@ -661,11 +674,15 @@ public class ParseJson {
                 spine_frame_events.push(spine_evt);
             }
             var frame_dur:int = db_eventObj.hasOwnProperty("duration") ? int(db_eventObj["duration"]) : 1;
-            during += _perKeyTime*frame_dur;
+            if(frame_dur==0){
+                during = _perKeyTime*totalFrame;  //最后一帧
+            }else{
+                during += _perKeyTime * frame_dur;
+            }
         }
     }
 
-    private function parseFFDAnims(db_animObj:Object,spine_ffdArr:Object):void{
+    private function parseFFDAnims(db_animObj:Object,spine_ffdArr:Object,totalFrame:int):void{
         var db_animFFDArr:Array = db_animObj["ffd"] as Array;
         var db_animFFDArr_len:uint = db_animFFDArr.length;
         for(var i:uint = 0 ;i<db_animFFDArr_len ;++i){
@@ -798,7 +815,11 @@ public class ParseJson {
                             }
                         }
                         var frame_dur:int = frame.hasOwnProperty("duration") ? int(frame["duration"]) : 1;
-                        during += _perKeyTime*frame_dur;
+                        if(frame_dur==0){
+                            during = _perKeyTime*totalFrame;  //最后一帧
+                        }else{
+                            during += _perKeyTime * frame_dur;
+                        }
                     }
                 }
             }
@@ -849,37 +870,29 @@ public class ParseJson {
         }
     }
 
-    private function parseSlotAnims(db_animObj:Object,spine_bonesArr:Object):void{
-        var db_animSlotArr:Array = db_animObj["slot"] as Array;
-        var db_animSlotArr_len:uint = db_animSlotArr.length;
-        for(var i:uint = 0;i<db_animSlotArr_len;++i){
-            var db_animSlotObj:Object = db_animSlotArr[i];
-
-            //spine attachment, color
-            var spine_attachment:Array = [];
-            var spine_color:Array = [];
-
-            //db frame
-            var frames:Array = db_animSlotObj["frame"] as Array;
-            var frames_len:uint = frames.length;
-            //time
-            var during:Number = 0;
-            for(var j:uint = 0 ;j<frames_len;++j){
-                var frame:Object = frames[j];
-                if(j<frames_len-1){
-                    if(frame.hasOwnProperty("curve")){
-                        var curve:Object=frame["curve"];
-                    }else if(frame.hasOwnProperty("tweenEasing")){
-                        if(frame["tweenEasing"]==null){
-                            curve = "stepped";
-                        }
+    private function parseSlotAnimsFrames(spine_attachment:Array,spine_color:Array,frames:Array,db_animSlotObj:Object,type:uint,totalFrame:int){
+        var frames_len:uint = frames.length;
+        //time
+        var during:Number = 0;
+        for(var j:uint = 0 ;j<frames_len;++j){
+            var frame:Object = frames[j];
+            if(j<frames_len-1){
+                if(frame.hasOwnProperty("curve")){
+                    var curve:Object=frame["curve"];
+                }else if(frame.hasOwnProperty("tweenEasing")){
+                    if(frame["tweenEasing"]==null){
+                        curve = "stepped";
                     }
                 }
-                var slotName:String = db_animSlotObj["name"];
+            }
+            var slotName:String = db_animSlotObj["name"];
 
+            if(type!=Frame_Type_ColorFrame){
                 var displayIndex:int = 0;
                 if(frame.hasOwnProperty("displayIndex")){
                     displayIndex = int(frame["displayIndex"]);
+                }else if(frame.hasOwnProperty("value")){
+                    displayIndex = int(frame["value"]);
                 }
                 if(displayIndex==-1){
                     if(spine_attachment.length==0 || spine_attachment[spine_attachment.length-1].name!=null){
@@ -895,7 +908,9 @@ public class ParseJson {
                         });
                     }
                 }
+            }
 
+            if(type!=Frame_Type_DisplayFrame){
                 if(frame.hasOwnProperty("color")){
                     var db_color:Object = frame["color"];
                     var color:Object = {
@@ -930,11 +945,43 @@ public class ParseJson {
                         }
                     }
                 }
-
-                var frame_dur:int = frame.hasOwnProperty("duration") ? int(frame["duration"]) : 1;
-                during += _perKeyTime*frame_dur;
-                curve = null;
             }
+
+            var frame_dur:int = frame.hasOwnProperty("duration") ? int(frame["duration"]) : 1;
+            if(frame_dur==0){
+                during = _perKeyTime*totalFrame;  //最后一帧
+            }else{
+                during += _perKeyTime * frame_dur;
+            }
+            curve = null;
+        }
+    }
+
+    private function parseSlotAnims(db_animObj:Object,spine_bonesArr:Object,totalFrame:int):void{
+        var db_animSlotArr:Array = db_animObj["slot"] as Array;
+        var db_animSlotArr_len:uint = db_animSlotArr.length;
+        for(var i:uint = 0;i<db_animSlotArr_len;++i){
+            var db_animSlotObj:Object = db_animSlotArr[i];
+
+            //spine attachment, color
+            var spine_attachment:Array = [];
+            var spine_color:Array = [];
+
+            //db frame
+            var frames:Array = db_animSlotObj["frame"] as Array;
+            if(frames!=null && frames.length>0){//for 5.3及以下
+                parseSlotAnimsFrames(spine_attachment,spine_color,frames,db_animSlotObj,Frame_Type_Frame,totalFrame);
+            }else{ //for 5.5
+                frames = db_animSlotObj["colorFrame"] as Array;
+                if(frames!=null && frames.length>0){
+                    parseSlotAnimsFrames(spine_attachment,spine_color,frames,db_animSlotObj,Frame_Type_ColorFrame,totalFrame);
+                }
+                frames = db_animSlotObj["displayFrame"] as Array;
+                if(frames!=null && frames.length>0){
+                    parseSlotAnimsFrames(spine_attachment,spine_color,frames,db_animSlotObj,Frame_Type_DisplayFrame,totalFrame);
+                }
+            }
+
             if(spine_attachment.length>0||spine_color.length>0){
                 var spine_slot:Object = new Object();
                 spine_bonesArr[db_animSlotObj["name"]] = spine_slot;
@@ -949,38 +996,154 @@ public class ParseJson {
         }
     }
 
-    private function parseBoneAnims(db_animObj:Object,spine_bonesArr:Object):void{
-        var db_animBoneArr:Array = db_animObj["bone"] as Array;
-        var db_animBoneArr_len:uint = db_animBoneArr.length;
-        for(var i:uint = 0;i<db_animBoneArr_len;++i){
-            var db_animBoneObj:Object = db_animBoneArr[i];
-            var boneName:String = db_animBoneObj["name"];
-            //spine translate , scale , rotate
-            var spine_translate:Array=[];
-            var spine_scale:Array=[];
-            var spine_rotate:Array=[];
-            //db frame
-            var frames:Array = db_animBoneObj["frame"] as Array;
-            var frames_len:uint = frames.length;
-            //time
-            var during:Number = 0;
-            for(var j:uint = 0 ;j<frames_len;++j){
-                var frame:Object = frames[j];
-                var curve:Object = null;
-                if(j<frames_len-1){
-                    if(frame.hasOwnProperty("curve")){
-                        curve =frame["curve"];
-                    }else if(frame.hasOwnProperty("tweenEasing")){
-                        if(frame["tweenEasing"]==null){
-                            curve = "stepped";
+    private function parseBoneAnimsFrames(spine_translate:Array,spine_scale:Array,spine_rotate:Array,frames:Array,db_animBoneObj:Object,type:uint,totalFrame):void
+    {
+        var frames_len:uint = frames.length;
+        //time
+        var during:Number = 0;
+        for(var j:uint = 0 ;j<frames_len;++j){
+            var frame:Object = frames[j];
+            var curve:Object = null;
+            if(j<frames_len-1){
+                if(frame.hasOwnProperty("curve")){
+                    curve =frame["curve"];
+                }else if(frame.hasOwnProperty("tweenEasing")){
+                    if(frame["tweenEasing"]==null){
+                        curve = "stepped";
+                    }
+                }
+            }
+            if(type == Frame_Type_Frame && frame.hasOwnProperty("transform")){
+                var transform:Object = frame["transform"];
+                if(transform.hasOwnProperty("x")||transform.hasOwnProperty("y")){
+                    var px:Number = Number(transform["x"]);
+                    var py:Number = -Number(transform["y"]);
+                    if(!px) px=0;
+                    if(!py) py=0;
+                    if(curve){
+                        spine_translate.push({
+                            "x":px, "y":py, "time":during, "curve":curve
+                        });
+                    }else{
+                        spine_translate.push({
+                            "x":px, "y":py, "time":during
+                        });
+                    }
+                }
+                else
+                {
+                    if(spine_translate.length==0 || j==frames_len-1 ||spine_translate[spine_translate.length-1].x!=0||spine_translate[spine_translate.length-1].y!=0)
+                    {
+                        if(curve){
+                            spine_translate.push({
+                                "x":0, "y":0,  "time":during,  "curve":curve
+                            });
+                        }else{
+                            spine_translate.push({
+                                "x":0,  "y":0,  "time":during
+                            });
+                        }
+                    }else if(j>0){
+                        if(curve){
+                            spine_translate.push({
+                                "x":0, "y":0, "time":during, "curve":curve
+                            });
+                        }else{
+                            spine_translate.push({
+                                "x":0, "y":0, "time":during
+                            });
                         }
                     }
                 }
-                if(frame.hasOwnProperty("transform")){
-                    var transform:Object = frame["transform"];
-                    if(transform.hasOwnProperty("x")||transform.hasOwnProperty("y")){
-                        var px:Number = Number(transform["x"]);
-                        var py:Number = -Number(transform["y"]);
+
+                if(transform.hasOwnProperty("skX")){
+                    var angle:Number = -Number(transform["skX"]);
+                    if(!angle) angle=0;
+                    if(curve){
+                        spine_rotate.push({
+                            "angle":angle ,  "time":during, "curve":curve
+                        });
+                    }else{
+                        spine_rotate.push({
+                            "angle":angle ,  "time":during
+                        });
+                    }
+                }
+                else
+                {
+                    if(spine_rotate.length==0 || j==frames_len-1 || spine_rotate[spine_rotate.length-1].angle!=0){
+                        if(curve){
+                            spine_rotate.push({
+                                "angle":0 , "time":during, "curve":curve
+                            });
+                        }else{
+                            spine_rotate.push({
+                                "angle":0 , "time":during
+                            });
+                        }
+                    }
+                    else if(j>0)
+                    {
+                        if(curve){
+                            spine_rotate.push({
+                                "angle":0 ,  "time":during, "curve":curve
+                            });
+                        }else{
+                            spine_rotate.push({
+                                "angle":0 ,  "time":during
+                            });
+                        }
+                    }
+                }
+
+                if(transform.hasOwnProperty("scX")||transform.hasOwnProperty("scY")){
+                    var scx:Number = Number(transform["scX"]);
+                    var scy:Number = Number(transform["scY"]);
+                    if(!scx) scx=1;
+                    if(!scy) scy=1;
+                    if(curve){
+                        spine_scale.push({
+                            "x":scx, "y":scy,  "time":during, "curve":curve
+                        });
+                    }else{
+                        spine_scale.push({
+                            "x":scx, "y":scy, "time":during
+                        });
+                    }
+                }
+                else
+                {
+                    if(spine_scale.length==0  || j==frames_len-1 || spine_scale[spine_scale.length-1].x!=1 || spine_scale[spine_scale.length-1].y!=1 ){
+                        if(curve){
+                            spine_scale.push({
+                                "x":1,  "y":1, "time":during, "curve":curve
+                            });
+                        }else{
+                            spine_scale.push({
+                                "x":1, "y":1, "time":during
+                            });
+                        }
+                    }
+                    else if(j>0)
+                    {
+                        if(curve){
+                            spine_scale.push({
+                                "x":1, "y":1,  "time":during, "curve":curve
+                            });
+                        }else{
+                            spine_scale.push({
+                                "x":1, "y":1, "time":during
+                            });
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if(type==Frame_Type_TranslateFrame){
+                    if(frame.hasOwnProperty("x")||frame.hasOwnProperty("y")){
+                        var px:Number = Number(frame["x"]);
+                        var py:Number = -Number(frame["y"]);
                         if(!px) px=0;
                         if(!py) py=0;
                         if(curve){
@@ -1018,9 +1181,53 @@ public class ParseJson {
                             }
                         }
                     }
-
-                    if(transform.hasOwnProperty("skX")){
-                        var angle:Number = -Number(transform["skX"]);
+                }
+                else if(type==Frame_Type_ScaleFrame){
+                    if(frame.hasOwnProperty("x")||frame.hasOwnProperty("y")){
+                        var px:Number = Number(frame["x"]);
+                        var py:Number = Number(frame["y"]);
+                        if(!px) px=1;
+                        if(!py) py=1;
+                        if(curve){
+                            spine_scale.push({
+                                "x":px, "y":py, "time":during, "curve":curve
+                            });
+                        }else{
+                            spine_scale.push({
+                                "x":px, "y":py, "time":during
+                            });
+                        }
+                    }
+                    else
+                    {
+                        if(spine_scale.length==0  || j==frames_len-1 || spine_scale[spine_scale.length-1].x!=1 || spine_scale[spine_scale.length-1].y!=1 ){
+                            if(curve){
+                                spine_scale.push({
+                                    "x":1,  "y":1, "time":during, "curve":curve
+                                });
+                            }else{
+                                spine_scale.push({
+                                    "x":1, "y":1, "time":during
+                                });
+                            }
+                        }
+                        else if(j>0)
+                        {
+                            if(curve){
+                                spine_scale.push({
+                                    "x":1, "y":1,  "time":during, "curve":curve
+                                });
+                            }else{
+                                spine_scale.push({
+                                    "x":1, "y":1, "time":during
+                                });
+                            }
+                        }
+                    }
+                }
+                else if(type==Frame_Type_RotateFrame){
+                    if(frame.hasOwnProperty("rotate")){
+                        var angle:Number = -Number(frame["rotate"]);
                         if(!angle) angle=0;
                         if(curve){
                             spine_rotate.push({
@@ -1058,51 +1265,42 @@ public class ParseJson {
                             }
                         }
                     }
-
-                    if(transform.hasOwnProperty("scX")||transform.hasOwnProperty("scY")){
-                        var scx:Number = Number(transform["scX"]);
-                        var scy:Number = Number(transform["scY"]);
-                        if(!scx) scx=1;
-                        if(!scy) scy=1;
-                        if(curve){
-                            spine_scale.push({
-                                "x":scx, "y":scy,  "time":during, "curve":curve
-                            });
-                        }else{
-                            spine_scale.push({
-                                "x":scx, "y":scy, "time":during
-                            });
-                        }
-                    }
-                    else
-                    {
-                        if(spine_scale.length==0  || j==frames_len-1 || spine_scale[spine_scale.length-1].x!=1 || spine_scale[spine_scale.length-1].y!=1 ){
-                            if(curve){
-                                spine_scale.push({
-                                    "x":1,  "y":1, "time":during, "curve":curve
-                                });
-                            }else{
-                                spine_scale.push({
-                                    "x":1, "y":1, "time":during
-                                });
-                            }
-                        }
-                        else if(j>0)
-                        {
-                            if(curve){
-                                spine_scale.push({
-                                    "x":1, "y":1,  "time":during, "curve":curve
-                                });
-                            }else{
-                                spine_scale.push({
-                                    "x":1, "y":1, "time":during
-                                });
-                            }
-                        }
-                    }
                 }
-                var frame_dur:int = frame.hasOwnProperty("duration") ? int(frame["duration"]) : 1;
-                during += _perKeyTime*frame_dur;
+            }
+
+            var frame_dur:int = frame.hasOwnProperty("duration") ? int(frame["duration"]) : 1;
+            if(frame_dur==0){
+                during = _perKeyTime*totalFrame;  //最后一帧
+            }else{
+                during += _perKeyTime * frame_dur;
+            }
+        }
+    }
+
+    private function parseBoneAnims(db_animObj:Object,spine_bonesArr:Object,totalFrame:int):void{
+        var db_animBoneArr:Array = db_animObj["bone"] as Array;
+        var db_animBoneArr_len:uint = db_animBoneArr.length;
+        for(var i:uint = 0;i<db_animBoneArr_len;++i){
+            var db_animBoneObj:Object = db_animBoneArr[i];
+            var boneName:String = db_animBoneObj["name"];
+            //spine translate , scale , rotate
+            var spine_translate:Array=[];
+            var spine_scale:Array=[];
+            var spine_rotate:Array=[];
+            //db frame
+            var frames:Array = db_animBoneObj["frame"] as Array;
+            if(frames!=null && frames.length>0){ //for 5.3及以下
+                parseBoneAnimsFrames(spine_translate,spine_scale,spine_rotate,frames,db_animBoneObj,Frame_Type_Frame,totalFrame);
+            }else{
+                //for 5.5 及以上
+                frames = db_animBoneObj["translateFrame"] as Array;
+                parseBoneAnimsFrames(spine_translate,spine_scale,spine_rotate,frames,db_animBoneObj,Frame_Type_TranslateFrame,totalFrame);
+
+                frames = db_animBoneObj["rotateFrame"] as Array;
+                parseBoneAnimsFrames(spine_translate,spine_scale,spine_rotate,frames,db_animBoneObj,Frame_Type_RotateFrame,totalFrame);
+
+                frames = db_animBoneObj["scaleFrame"] as Array;
+                parseBoneAnimsFrames(spine_translate,spine_scale,spine_rotate,frames,db_animBoneObj,Frame_Type_ScaleFrame,totalFrame);
             }
 
             if(spine_translate.length>0 || spine_scale.length>0 || spine_rotate.length>0){
