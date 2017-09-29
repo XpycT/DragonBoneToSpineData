@@ -828,10 +828,8 @@ public class ParseJson {
     }
 
     //计算动画中的位移
-    private function calculateDeformAnimWeight(display:Object,vertices:Array,offset:int = 0):void{
-
-        //spine weight vertices格式:bonecount,boneindex,vx,vy,weight
-        var bonePoseArr:Array = display["bonePose"] as Array;
+    private function calculateDeformAnimWeight(db_display_data:Object,spine_vertices:Array,offset:int = 0):void{
+        var bonePoseArr:Array = db_display_data["bonePose"] as Array;//dargonbones 的bonepose数据
         var bonePoseKV:Dictionary = new Dictionary();
         for(var m:uint = 0;m<bonePoseArr.length;m+=7){
             var matrix:Matrix=new Matrix(bonePoseArr[m+1],bonePoseArr[m+2],bonePoseArr[m+3],
@@ -839,13 +837,13 @@ public class ParseJson {
             bonePoseKV["BoneIndex"+bonePoseArr[m]] = matrix;
         }
 
-        var db_weights:Array=display["weights"] as Array;//db权重
+        var db_weights:Array=db_display_data["weights"] as Array;//db权重
         var db_weights_len:uint=db_weights.length;
         var vertexIndex:uint = 0;
         for(var k:uint = 0 ;k<db_weights_len ;++k){
             var boneCount:uint = uint(db_weights[k]);//骨骼数量
             if(offset<=0){
-                var vertex:Point = new Point(vertices[vertexIndex*2],vertices[vertexIndex*2+1]);
+                var vertex:Point = new Point(spine_vertices[vertexIndex*2],spine_vertices[vertexIndex*2+1]);
                 var result:Point = new Point();
                 for(var t:uint=0;t<boneCount*2;t+=2){
                     var boneIdx:uint = uint(db_weights[k+t+1]);//骨骼索引
@@ -858,10 +856,10 @@ public class ParseJson {
                     result.x += temp.x*weight;
                     result.y += temp.y*weight;
                 }
-                vertices[vertexIndex*2] = result.x;
-                vertices[vertexIndex*2+1] = result.y;
+                spine_vertices[vertexIndex*2] = result.x;
+                spine_vertices[vertexIndex*2+1] = result.y;
                 ++vertexIndex;
-                if(vertexIndex*2+1>=vertices.length){
+                if(vertexIndex*2+1>=spine_vertices.length){
                     break;
                 }
             }
