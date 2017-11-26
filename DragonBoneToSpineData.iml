@@ -4,7 +4,7 @@
     <configurations>
       <configuration name="DragonBoneToSpineData" target-platform="Desktop" main-class="Main" output-file="Main.swf" output-folder="$MODULE_DIR$/out/production/DragonBoneToSpineData">
         <dependencies target-player="19.0">
-          <sdk name="4.6.0" />
+          <sdk name="SDK_Flex4.6_AIR3.1" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/Main-app.xml" package-file-name="DragonBoneToSpine">
@@ -23,7 +23,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="4.6.0" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="SDK_Flex4.6_AIR3.1" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="Libs" level="project" />
   </component>

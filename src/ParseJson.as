@@ -89,7 +89,7 @@ public class ParseJson {
                     _textureData = _textureData.concat(tab+"orig: "+textureObj["width"]+" ,"+textureObj["height"]+n);
 
                 if(textureObj.hasOwnProperty("frameX"))
-                    _textureData = _textureData.concat(tab+"offset: "+textureObj["frameX"]+" ,"+textureObj["frameY"]+n);
+                    _textureData = _textureData.concat(tab+"offset: "+-textureObj["frameX"]+" ,"+-textureObj["frameY"]+n);
                 else
                     _textureData = _textureData.concat(tab+"offset: 0,0"+n);
 
