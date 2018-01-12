@@ -66,9 +66,17 @@ public class ParseJson {
         for(var i:uint = 0;i<jsons.length;++i){
             var json:String = jsons[i];
             var jsonObject:Object = JSON.parse(json);
+            var width :Number = 0;
+            var height :Number = 0;
+            if(jsonObject.hasOwnProperty("width")){
+                width = jsonObject["width"] as Number;
+            }
+            if(jsonObject.hasOwnProperty("height")){
+                height = jsonObject["height"] as Number;
+            }
             _textureData = _textureData.concat(n);
             _textureData = _textureData.concat(jsonObject["imagePath"]+n);
-            _textureData = _textureData.concat("size: 0,0"+n);
+            _textureData = _textureData.concat("size: "+width+","+height+""+n);
             _textureData = _textureData.concat("format: RGBA8888"+n);
             _textureData = _textureData.concat("filter: Linear,Linear"+n);
             _textureData = _textureData.concat("repeat: none"+n);
@@ -385,7 +393,7 @@ public class ParseJson {
                 var db_skin:Object = db_skins[i];
 
                 var spine_skin:Object = new Object();
-                if(db_skin["name"].length==0){
+                if(!db_skin.hasOwnProperty("name") || db_skin["name"].length==0){
                     spine_skins["default"] = spine_skin;
                 }else{
                     spine_skins[db_skin["name"]] = spine_skin;
@@ -421,12 +429,20 @@ public class ParseJson {
                                 if(display.hasOwnProperty("width")){
                                     spine_attachment["width"] = display["width"];
                                 }else{
-                                    spine_attachment["width"] = _textureKV[display["name"]].width;
+                                    if(display.hasOwnProperty("path")){
+                                        spine_attachment["width"] = _textureKV[display["path"]].width;
+                                    }else{
+                                        spine_attachment["width"] = _textureKV[display["name"]].width;
+                                    }
                                 }
                                 if(display.hasOwnProperty("height")){
                                     spine_attachment["height"] = display["height"];
                                 }else{
-                                    spine_attachment["height"] = _textureKV[display["name"]].height;
+                                    if(display.hasOwnProperty("path")){
+                                        spine_attachment["height"] = _textureKV[display["path"]].height;
+                                    }else{
+                                        spine_attachment["height"] = _textureKV[display["name"]].height;
+                                    }
                                 }
 
                                 var isImage:Boolean = true;
@@ -462,6 +478,9 @@ public class ParseJson {
                                         sy = Number(transform["scY"]);
                                         if(isImage) spine_attachment["scaleY"] = sy;
                                     }
+                                }
+                                if(display.hasOwnProperty("path")){ //path
+                                    spine_attachment["path"] = display["path"];
                                 }
                                 var displayAttach:Sprite = new Sprite();
                                 displayAttach.rotation = angle;
@@ -1289,16 +1308,22 @@ public class ParseJson {
             var frames:Array = db_animBoneObj["frame"] as Array;
             if(frames!=null && frames.length>0){ //for 5.3及以下
                 parseBoneAnimsFrames(spine_translate,spine_scale,spine_rotate,frames,db_animBoneObj,Frame_Type_Frame,totalFrame);
-            }else{
+            }else {
                 //for 5.5 及以上
                 frames = db_animBoneObj["translateFrame"] as Array;
-                parseBoneAnimsFrames(spine_translate,spine_scale,spine_rotate,frames,db_animBoneObj,Frame_Type_TranslateFrame,totalFrame);
+                if (frames != null && frames.length > 0) {
+                    parseBoneAnimsFrames(spine_translate, spine_scale, spine_rotate, frames, db_animBoneObj, Frame_Type_TranslateFrame, totalFrame);
+                }
 
                 frames = db_animBoneObj["rotateFrame"] as Array;
-                parseBoneAnimsFrames(spine_translate,spine_scale,spine_rotate,frames,db_animBoneObj,Frame_Type_RotateFrame,totalFrame);
+                if (frames != null && frames.length > 0) {
+                    parseBoneAnimsFrames(spine_translate, spine_scale, spine_rotate, frames, db_animBoneObj, Frame_Type_RotateFrame, totalFrame);
+                }
 
                 frames = db_animBoneObj["scaleFrame"] as Array;
-                parseBoneAnimsFrames(spine_translate,spine_scale,spine_rotate,frames,db_animBoneObj,Frame_Type_ScaleFrame,totalFrame);
+                if (frames != null && frames.length > 0) {
+                    parseBoneAnimsFrames(spine_translate, spine_scale, spine_rotate, frames, db_animBoneObj, Frame_Type_ScaleFrame, totalFrame);
+                }
             }
 
             if(spine_translate.length>0 || spine_scale.length>0 || spine_rotate.length>0){
