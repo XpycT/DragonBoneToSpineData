@@ -13,8 +13,8 @@
 当前只在Unity中测试过转换后的文件。
 
 # 说明
-release文件中，“DragonBoneToSpine_mac.app.zip”是mac上的绿色版本 ,  “DragonBoneToSpine_win.zip”是windows上的绿色版本 , "DragonBoneToSpine.air"为通用版本，需要安装Flash AIR环境<br/>
-如果你要使用DragonBone转Unity动画，可以访问此处[DragonBoneToUnity](http://git.oschina.net/bingheliefeng/DragonBone_Unity)
+release 文件夹中，有mac和windows两个版本<br/>
+如果你要使用DragonBone转Unity动画，可以访问此处 [Bones2D](https://assetstore.unity.com/packages/tools/animation/bone2d-70762) 或者简化版本 [DragonBoneToUnity](http://git.oschina.net/bingheliefeng/DragonBone_Unity)
 
 # change list v1.0.8
 fix: 转换有贴图用的path数据时错误
